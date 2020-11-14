@@ -1,0 +1,11 @@
+ name: occupancy_networks
+ channels:
+     - pytorch
+ dependencies:
+     - python=3.6
+     - pytorch
+     - torchvision
+     - numpy
+     - scikit-learn
+     - h5py
+     - scipy
