@@ -45,7 +45,7 @@ public:
   static std::vector<Cube> generateCubes();
   
   //computes occupancy values for each vertex in each cube given implicit meshBoundary function
-  static computeOccupancies(std::vector<Cube> &cubes, std::function<bool (float, float, float)> meshBoundary);
+  static void computeOccupancies(std::vector<Cube> &cubes, std::function<bool (float, float, float)> meshBoundary);
 
   //given a file with cube vertices and occupancies, constructs the cubes data structure 
   static std::vector<Cube> assembleCubes(std::string pointsFile, std::string occupanciesFile);

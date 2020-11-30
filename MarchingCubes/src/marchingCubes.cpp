@@ -300,9 +300,22 @@ int triTable[256][16] =
 {0, 3, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}};
 
-std::vector<Cube> MarchingCubes::assembleCubes(std::string pointsFile, std::string occupanciesFile){
 
-  std::vector<Cube> cubes;
+void MarchingCubes::computeOccupancies(std::vector<Cube> &cubes, std::function<bool (float, float, float)> inMesh){
+
+  for(int c= 0; c < cubes.size(); c++){
+
+    for(int i = 0; i <cubes[c].vertices.size(); i++){
+        cubes[c].vertices[i].occupies = inMesh(cubes[c].vertices[i].x,
+                                               cubes[c].vertices[i].y,
+                                               cubes[c].vertices[i].z);
+    }
+  }
+}
+
+
+void readCoordinatesFromFile(std::vector<Cube> &cubes, std::string pointsFile){
+
   std::ifstream ptsFile;
   ptsFile.open(pointsFile, std::ifstream::in);
   float x,y,z;
@@ -320,6 +333,23 @@ std::vector<Cube> MarchingCubes::assembleCubes(std::string pointsFile, std::stri
   }
   ptsFile.close();
 
+
+}
+
+
+std::vector<Cube> MarchingCubes::generateCubes(){
+  std::vector<Cube> cubes;
+  std::string gridpointsFile = "/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/MarchingCubes/gridpts.txt";
+  readCoordinatesFromFile(cubes, gridpointsFile);
+  return cubes;
+
+}
+
+
+std::vector<Cube> MarchingCubes::assembleCubes(std::string pointsFile, std::string occupanciesFile){
+
+  std::vector<Cube> cubes;
+  readCoordinatesFromFile(cubes, pointsFile);
 
   float threshold = 0.1;
   std::ifstream occFile;
@@ -434,7 +464,9 @@ void writeMeshFile(std::set<Vertex> &vsset, std::vector<Face> &faces, std::strin
   std::vector<Vertex> vertices(vsset.begin(), vsset.end());
   std::sort(vertices.begin(), vertices.end(), sortVertices);
   std::ofstream out(meshFileName);
-  out << vertices.size() << "  " << faces.size() << std::endl;
+
+  out << "OFF" << std::endl;
+  out << vertices.size() << "  " << faces.size() << " 0 " << std::endl;
   for(auto v:vertices){
     out << v.x << " " << v.y << " " << v.z << std::endl;
   }
