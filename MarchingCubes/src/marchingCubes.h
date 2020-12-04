@@ -1,10 +1,11 @@
 #include <functional>
 #include <vector>
 #include <string>
+#include <cmath>
 
 class Vertex{
   public:
-  Vertex(float xx,float yy, float zz): x(xx), y(yy), z(zz){globalIdx = -1;};
+  Vertex(float xx,float yy, float zz): x(xx), y(yy), z(zz){globalIdx = -1; occupies=0;};
   float x;
   float y;
   float z;
@@ -19,7 +20,7 @@ class Vertex{
       return false;
   }
   bool operator==(const Vertex &other) const{
-    if ((abs(x-other.x) < 0.001) && (abs(y-other.y) < 0.001) && (abs(z-other.z) < 0.001))
+    if ((fabs(x-other.x) < 0.001) && (fabs(y-other.y) < 0.001) && (fabs(z-other.z) < 0.001))
       return true;
     return false;
   }

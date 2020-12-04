@@ -339,7 +339,8 @@ void readCoordinatesFromFile(std::vector<Cube> &cubes, std::string pointsFile){
 
 std::vector<Cube> MarchingCubes::generateCubes(){
   std::vector<Cube> cubes;
-  std::string gridpointsFile = "/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/MarchingCubes/gridpts.txt";
+  std::string gridpointsFile = "/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/MarchingCubes/src/32CubedGrid.txt";
+  //std::string gridpointsFile = "/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/evaluation/agrid_32_5.txt";
   readCoordinatesFromFile(cubes, gridpointsFile);
   return cubes;
 
@@ -361,6 +362,7 @@ std::vector<Cube> MarchingCubes::assembleCubes(std::string pointsFile, std::stri
   float pred;
   while(occFile.good()){
     occFile >> pred;
+    //make like an implicit function and be 0 if (probably) on the mesh
     if(pred >= threshold)
       occupied = true;
     else {
@@ -438,10 +440,28 @@ Vertex estimateIntersectionPoint(Cube &cube, int edgeIdx){
     assert(-1);
   }
 
+
   Vertex &vert1 = cube.vertices[v1];
   Vertex &vert2 = cube.vertices[v2];
+  float alpha = std::rand()/RAND_MAX;
+  Vertex random(alpha*vert1.x + (1.0-alpha)*vert2.x,
+                alpha*vert1.y + (1-alpha)*vert2.y,
+                alpha*vert1.z + (1-alpha)*vert2.z);
+  /*
   Vertex midpoint((vert1.x+vert2.x)/2.0, (vert1.y + vert2.y)/2.0, (vert1.z + vert2.z)/2.0);
   return midpoint;
+  */
+
+  /*
+  if(fabs(vert1.occupies-vert2.occupies) < 0.001)
+    return vert1;
+  float weighting = -1.0*vert1.occupies/(vert2.occupies-vert1.occupies);
+  Vertex interp(vert1.x + (vert2.x-vert1.x)*weighting,
+                vert1.y + (vert2.y-vert1.y)*weighting,
+                vert1.z + (vert2.z-vert1.z)*weighting);
+  return interp;
+  */
+  return vert1;
 
 }
 
@@ -450,16 +470,48 @@ bool sortVertices(Vertex v1, Vertex v2){ return v1.globalIdx < v2.globalIdx;}
 
 struct VertexComparator{
     bool operator()(const Vertex &v1, const Vertex &v2){
+      float dist = std::sqrt((v1.x-v2.x)*(v1.x-v2.x) + (v1.y-v2.y)*(v1.y-v2.y) +
+                             (v1.z-v2.z)*(v1.z-v2.z));
+      
+      if (dist < 0.0000001)
+        return false;
+
+      if (fabs(v1.x - v2.x) > 0.001)
+        return v1.x < v2.x;
+      if (fabs(v1.y - v2.y) > 0.001)
+        return v1.y < v2.y;
+      if (fabs(v1.z - v2.z) > 0.001)
+        return v1.z < v2.z;
+      return false;
+
+      }
+};
+
+
+
+
+struct FaceComparator{
+    bool operator()(const Face &f1, const Face &f2){
+      if (f1.v1 < f2.v1)
+        return true;
+      if (f1.v2 < f2.v2)
+        return true;
+      if (f1.v3 < f2.v3)
+        return true;
+      return false;
+      }
+};
+
+bool operator<(const Vertex &v1, const Vertex &v2){
       if ((v1.x-v2.x) > -0.001) return true;
       if ((v1.x-v2.x) > 0.001) return false;
       if ((v1.y-v2.y) > -0.001) return true;
       if ((v1.y-v2.y) > 0.001) return false;
       if ((v1.z-v2.z) > -0.001) return true;
       return false;
-      }
-};
+      };
 
-void writeMeshFile(std::set<Vertex> &vsset, std::vector<Face> &faces, std::string meshFileName){
+void writeMeshFile(std::set<Vertex,VertexComparator> &vsset, std::set<Face,FaceComparator> &faces, std::string meshFileName){
 
   std::vector<Vertex> vertices(vsset.begin(), vsset.end());
   std::sort(vertices.begin(), vertices.end(), sortVertices);
@@ -478,16 +530,10 @@ void writeMeshFile(std::set<Vertex> &vsset, std::vector<Face> &faces, std::strin
 
 }
 
-/*
-struct VertexComparator{
-  bool ()(Vertex v1, Vertex v2){return (abs(v1.x-v2.x) < 0.001) && (abs(v1.y-v2.y) < 0.001) && (abs(v1.z-v2.z) < 0.001);}
-}*/
-
-
 void MarchingCubes::march(std::vector<Cube> & cubes, std::string meshFileName){
 
-  std::set<Vertex> vertices;
-  std::vector<Face> faces;
+  std::set<Vertex, VertexComparator> vertices;
+  std::set<Face, FaceComparator> faces;
   int vCount = 0;
   for(auto cube: cubes){
     //Calculate the cube index indicating which edges are split
@@ -522,6 +568,7 @@ void MarchingCubes::march(std::vector<Cube> & cubes, std::string meshFileName){
           vertices.insert(v);
           localToGlobalIdx.insert(std::pair<int, int>(edgeIdx, vCount));
           vCount++;
+
         }
         else{
           localToGlobalIdx.insert(std::pair<int, int>(edgeIdx, it->globalIdx));
@@ -541,7 +588,7 @@ void MarchingCubes::march(std::vector<Cube> & cubes, std::string meshFileName){
       f.v1 = localToGlobalIdx[v1];
       f.v2 = localToGlobalIdx[v2];
       f.v3 = localToGlobalIdx[v3];
-      faces.push_back(f);
+      faces.insert(f);
     }
   }
   writeMeshFile(vertices, faces, meshFileName);
