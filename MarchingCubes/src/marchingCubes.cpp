@@ -7,6 +7,10 @@
 #include <set>
 #include <unordered_map>
 
+#include <Eigen/Dense>
+#include <Eigen/Geometry>
+
+
 //These two lookup tables are sourced from paulbourke.net/geometry/polyonise
 
 int edgeTable[256]={
@@ -339,8 +343,11 @@ void readCoordinatesFromFile(std::vector<Cube> &cubes, std::string pointsFile){
 
 std::vector<Cube> MarchingCubes::generateCubes(){
   std::vector<Cube> cubes;
+  //std::string gridpointsFile = "/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/evaluation/winegrid.txt";
+  //std::string gridpointsFile = "/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/evaluation/coords.txt";
   std::string gridpointsFile = "/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/MarchingCubes/src/32CubedGrid.txt";
   //std::string gridpointsFile = "/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/evaluation/agrid_32_5.txt";
+
   readCoordinatesFromFile(cubes, gridpointsFile);
   return cubes;
 
@@ -457,7 +464,6 @@ Vertex estimateIntersectionPoint(Cube &cube, int edgeIdx){
                 vert1.z + (vert2.z-vert1.z)*weighting);
   return interp;
   */
-  //return vert1;
 
 }
 
@@ -497,15 +503,6 @@ struct FaceComparator{
       return false;
       }
 };
-
-bool operator<(const Vertex &v1, const Vertex &v2){
-      if ((v1.x-v2.x) > -0.001) return true;
-      if ((v1.x-v2.x) > 0.001) return false;
-      if ((v1.y-v2.y) > -0.001) return true;
-      if ((v1.y-v2.y) > 0.001) return false;
-      if ((v1.z-v2.z) > -0.001) return true;
-      return false;
-      };
 
 void writeMeshFile(std::set<Vertex,VertexComparator> &vsset, std::set<Face,FaceComparator> &faces, std::string meshFileName){
 
@@ -551,10 +548,14 @@ void MarchingCubes::march(std::vector<Cube> & cubes, std::string meshFileName){
     int mask = 1;
 
     std::unordered_map<int, int> localToGlobalIdx;
+    std::unordered_map<int, Vertex> edgeIdxToVertex;
     for(int edgeIdx = 0; edgeIdx < 12; edgeIdx++){
       if (edges & mask){
         //estimate location of mesh intersection
         Vertex v(estimateIntersectionPoint(cube, edgeIdx));
+
+        //store so for face ordering down below
+        edgeIdxToVertex.insert(std::pair<int,Vertex>(edgeIdx, v));
 
         //track vertices globally with an index
         auto it = vertices.find(v);
@@ -582,13 +583,33 @@ void MarchingCubes::march(std::vector<Cube> & cubes, std::string meshFileName){
 
     //Read out the triangles formed
     for (int i=0;triTable[cubeindex][i]!=-1;i+=3) {
-      int v1 = triTable[cubeindex][i];
-      int v2 = triTable[cubeindex][i+1];
-      int v3 = triTable[cubeindex][i+2];
+      int v1_idx = triTable[cubeindex][i];
+      int v2_idx= triTable[cubeindex][i+1];
+      int v3_idx = triTable[cubeindex][i+2];
+
+      const Vertex v1 = edgeIdxToVertex.at(v1_idx);
+      const Vertex v2 = edgeIdxToVertex.at(v2_idx);
+      const Vertex v3 = edgeIdxToVertex.at(v3_idx);
+      Eigen::Vector3f vector1(v2.x-v1.x, v2.y-v1.y, v2.z-v1.z);
+      Eigen::Vector3f vector2(v3.x-v1.x, v3.y-v1.y, v3.z-v1.z);
+      Eigen::Vector3f normal = vector1.cross(vector2);
+      Eigen::Vector3f light(0.01,0.01,0.01);
+
+      v1_idx = localToGlobalIdx[v1_idx];
+      v2_idx= localToGlobalIdx[v2_idx];
+      v3_idx = localToGlobalIdx[v3_idx];
+
       Face f;
-      f.v1 = localToGlobalIdx[v1];
-      f.v2 = localToGlobalIdx[v2];
-      f.v3 = localToGlobalIdx[v3];
+      if (normal.dot(light) < 0){
+      f.v1 = v1_idx;
+      f.v2 = v3_idx;
+      f.v3 = v2_idx;
+      }
+      else{
+        f.v1 = v1_idx;
+        f.v2 = v2_idx;
+        f.v3 = v3_idx;
+      }
       if ((f.v1 == f.v2) || (f.v1 == f.v3) || (f.v2 == f.v3)){
         std::cout << "Face with repeat vertices" << std::endl;
         //std::cout << "Face: " << f.v1 << "  " << f.v2 << "  " << f.v3 << std::endl;
