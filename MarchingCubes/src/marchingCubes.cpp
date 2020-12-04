@@ -443,14 +443,10 @@ Vertex estimateIntersectionPoint(Cube &cube, int edgeIdx){
 
   Vertex &vert1 = cube.vertices[v1];
   Vertex &vert2 = cube.vertices[v2];
-  float alpha = std::rand()/RAND_MAX;
-  Vertex random(alpha*vert1.x + (1.0-alpha)*vert2.x,
-                alpha*vert1.y + (1-alpha)*vert2.y,
-                alpha*vert1.z + (1-alpha)*vert2.z);
-  /*
+
   Vertex midpoint((vert1.x+vert2.x)/2.0, (vert1.y + vert2.y)/2.0, (vert1.z + vert2.z)/2.0);
   return midpoint;
-  */
+
 
   /*
   if(fabs(vert1.occupies-vert2.occupies) < 0.001)
@@ -461,7 +457,7 @@ Vertex estimateIntersectionPoint(Cube &cube, int edgeIdx){
                 vert1.z + (vert2.z-vert1.z)*weighting);
   return interp;
   */
-  return vert1;
+  //return vert1;
 
 }
 
@@ -555,7 +551,6 @@ void MarchingCubes::march(std::vector<Cube> & cubes, std::string meshFileName){
     int mask = 1;
 
     std::unordered_map<int, int> localToGlobalIdx;
-    int check = 0;
     for(int edgeIdx = 0; edgeIdx < 12; edgeIdx++){
       if (edges & mask){
         //estimate location of mesh intersection
@@ -567,14 +562,20 @@ void MarchingCubes::march(std::vector<Cube> & cubes, std::string meshFileName){
           v.globalIdx = vCount;
           vertices.insert(v);
           localToGlobalIdx.insert(std::pair<int, int>(edgeIdx, vCount));
-          vCount++;
+          if(std::isnan(v.x) || std::isnan(v.y) || std::isnan(v.z)){
+            std::cout << "Vertex with nan Coordinate" << std::endl;
+            assert(-1);
+            }
+           vCount++;
 
         }
         else{
           localToGlobalIdx.insert(std::pair<int, int>(edgeIdx, it->globalIdx));
+          //std::cout << "Edge idx: " << edgeIdx << " maps to global vertx: " << it->x <<
+          //  "  " << it->y << "it->z" << std::endl;
+          //std::cout << "From v: " << v.x << " " << v.y << " " << v.z << std::endl;
         }
 
-        check +=1;
       }
       mask = mask*2;
     }
@@ -588,6 +589,13 @@ void MarchingCubes::march(std::vector<Cube> & cubes, std::string meshFileName){
       f.v1 = localToGlobalIdx[v1];
       f.v2 = localToGlobalIdx[v2];
       f.v3 = localToGlobalIdx[v3];
+      if ((f.v1 == f.v2) || (f.v1 == f.v3) || (f.v2 == f.v3)){
+        std::cout << "Face with repeat vertices" << std::endl;
+        //std::cout << "Face: " << f.v1 << "  " << f.v2 << "  " << f.v3 << std::endl;
+        //std::cout << "vertices" << v1 << "  " << v2 << "  " << v3 << std::endl;
+
+        assert(-1);
+          }
       faces.insert(f);
     }
   }
