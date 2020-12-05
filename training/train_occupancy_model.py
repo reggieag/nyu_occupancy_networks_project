@@ -10,7 +10,7 @@ SHAPENET_DIR = "/scratch/rag551/occupancy_networks/ShapeNet"
 #     '02958343'
 # ]
 
-SHAPENET_CLASS = '02958343'
+SHAPENET_CLASS = '04256520'  # couches
 
 
 def load_list_dirs(dir, list_file):
