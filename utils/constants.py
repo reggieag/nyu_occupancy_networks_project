@@ -1,0 +1,3 @@
+K = 64
+BATCH_SIZE = 64
+DEVICE = 'cuda'
