@@ -26,9 +26,14 @@ def train(epoch, model, trainloader, optimizer):
 
     for batch_idx, data in enumerate(train_loader):
         (pts, occupancies) = data
+        print(f"pts.shape is {pts.shape}")
+        print(f"occupancies.shape is {occupancies.shape}")
         # Each batch size contains batch_size sets of "K" points
         pts = pts.view(-1, K, 3, 1).permute(0, 2, 1, 3).cuda()
         occupancies = occupancies.view(-1, K, 1).cuda()
+
+        print(f"pts.shape is {pts.shape}")
+        print(f"occupancies.shape is {occupancies.shape}")
         optimizer.zero_grad()
 
         pred = model(pts)
