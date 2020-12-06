@@ -82,8 +82,8 @@ class PointNetEncoder(nn.Module):
         x = F.max_pool1d(x, k)
 
         x = x.squeeze()
-
-        pts = self.fc_final(F.relu(x))
+        print(f"x.shape is {x.shape}")
+        pts = self.fc_final(x)
 
         return pts
 
