@@ -75,8 +75,9 @@ class PointNetEncoder(nn.Module):
 
         x = self.resnet_4(x)
         n, k, c = x.size()
+        x = x.permute(0, 2, 1)
 
-        print(f"x is {x}")
+        print(f"x.shape is {x.shape}")
         print(f"k is {k}")
         x = F.max_pool1d(x, k)
 
