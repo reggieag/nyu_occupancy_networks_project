@@ -77,12 +77,12 @@ class PointNetEncoder(nn.Module):
         n, k, c = x.size()
         x = x.permute(0, 2, 1)
 
-        print(f"x.shape is {x.shape}")
-        print(f"k is {k}")
+        # print(f"x.shape is {x.shape}")
+        # print(f"k is {k}")
         x = F.max_pool1d(x, k)
 
         x = x.squeeze()
-        print(f"x.shape is {x.shape}")
+        # print(f"x.shape is {x.shape}")
         pts = self.fc_final(x)
 
         return pts
@@ -158,6 +158,7 @@ class OccupancyModel(nn.Module):
         return nn.Sequential(*blocks)
 
     def forward(self, x):
+        print(f"x.shape  at beginning of forward is {x.shape}")
         pts = self.encoderModel(x)
         # pts = self.fc_enc(x)
         pts = pts.view(-1, 256, 1)
@@ -173,4 +174,5 @@ class OccupancyModel(nn.Module):
         x = self.fc2(x)
         x = x.view(-1, 1)
         x = torch.sigmoid(x)
+        print(f"x.shape at end of forward is {x.shape}")
         return x
