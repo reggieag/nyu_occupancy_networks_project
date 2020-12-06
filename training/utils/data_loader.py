@@ -4,8 +4,7 @@ import numpy
 import os
 
 
-# One DataSetClass per subdirectory in a category, will return "K" point samples and a single image randomly
-# drawn from the 23 available
+# One DataSetClass per subdirectory in a category, will return "K" point samples and a pointcloud with POINTCLOUD_N points
 class DataSetClass(torch.utils.data.Dataset):
     def __init__(self, d):
         self.dir = d

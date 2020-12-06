@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.optim as optim
 
 from utils.data_loader import DataSetClass, load_list_dirs, generate_data_loader
-from utils.constants import K, BATCH_SIZE, DEVICE
+from utils.constants import K, BATCH_SIZE, DEVICE, POINTCLOUD_N
 from models.point_completion import OccupancyModel
 
 SHAPENET_DIR = "/scratch/rag551/occupancy_networks/ShapeNet"
@@ -25,18 +25,22 @@ def train(epoch, model, trainloader, optimizer):
     model.train()
 
     for batch_idx, data in enumerate(train_loader):
-        (pts, occupancies) = data
+        pts, occupancies, pointcloud = data
         print(f"pts.shape is {pts.shape}")
         print(f"occupancies.shape is {occupancies.shape}")
         # Each batch size contains batch_size sets of "K" points
-        pts = pts.view(-1, K, 3, 1).permute(0, 2, 1, 3).cuda()
-        occupancies = occupancies.view(-1, K, 1).cuda()
+        pointcloud = pointcloud.view(BATCH_SIZE*K, 3, POINTCLOUD_N).cuda()
+        pts = pts.view(BATCH_SIZE * K, 3, 1).cuda()
+        occupancies = occupancies.view(BATCH_SIZE * K, 1).cuda()
+        # not sure what i should be doing here
+        # pts = pts.view(-1, K, 3, 1).permute(0, 2, 1, 3).cuda()
+        # occupancies = occupancies.view(-1, K, 1).cuda()
 
         print(f"pts.shape is {pts.shape}")
         print(f"occupancies.shape is {occupancies.shape}")
         optimizer.zero_grad()
 
-        pred = model(pts)
+        pred = model(pts, pointcloud)
         pred = pred.permute(0, 2, 1, 3).squeeze(-1)
 
         loss = modelCriterion(pred, occupancies)

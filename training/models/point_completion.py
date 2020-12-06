@@ -157,19 +157,20 @@ class OccupancyModel(nn.Module):
             blocks.append(Block())
         return nn.Sequential(*blocks)
 
-    def forward(self, x):
+    def forward(self, x, pointcloud):
         print(f"x.shape  at beginning of forward is {x.shape}")
-        pts = self.encoderModel(x)
+        print(f"pointcloud.shape  at beginning of forward is {pointcloud.shape}")
+        pt_cloud = self.encoderModel(pointcloud)
         print(f"x.shape after encoding is {x.shape}")
         # pts = self.fc_enc(x)
-        pts = pts.view(-1, 256, 1)
+        pt_cloud = pt_cloud.view(-1, 256, 1)
         x = self.fc1(x)
         # 5 pre-activation ResNet-blocks
-        x = self.blocks({'enc': pts, 'ex': x})
+        x = self.blocks({'enc': pt_cloud, 'ex': x})
         x = x['ex']
         # CBN
-        gamma = self.gammaLayer(pts)
-        beta = self.betaLayer(pts)
+        gamma = self.gammaLayer(pt_cloud)
+        beta = self.betaLayer(pt_cloud)
         x = gamma * self.cbn(x) + beta
         x = F.relu(x)
         x = self.fc2(x)
