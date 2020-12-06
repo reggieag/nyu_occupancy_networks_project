@@ -28,6 +28,7 @@ def train(epoch, model, trainloader, optimizer):
         pts, occupancies, pointcloud = data
         print(f"pts.shape is {pts.shape}")
         print(f"occupancies.shape is {occupancies.shape}")
+        print(f"pointcloud.shape is {pointcloud.shape}")
         # Each batch size contains batch_size sets of "K" points
         pointcloud = pointcloud.view(BATCH_SIZE*K, 3, POINTCLOUD_N).cuda()
         pts = pts.view(BATCH_SIZE * K, 3, 1).cuda()
