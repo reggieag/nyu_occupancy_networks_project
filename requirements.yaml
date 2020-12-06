@@ -3,8 +3,10 @@
      - pytorch
  dependencies:
      - python=3.6
-     - pytorch
-     - torchvision
+     # downgrade pytorch/ cuda driver to work on prince cluster
+     - cudatoolkit=10.1
+     - pytorch==1.6.0
+     - torchvision==0.7.0
      - numpy
      - scikit-learn
      - h5py

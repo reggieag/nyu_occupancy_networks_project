@@ -142,11 +142,11 @@ class OccupancyModel(nn.Module):
         self.blocks = self.makeBlocks()
         self.encoderModel = PointNetEncoder()
         self.fc_enc = nn.Linear(512, 256)  # there's a fc layer in the pointnetencoder so don't know if we need this.
-        self.gammaLayer = nn.Conv1d(256,256,kernel_size=1)
-        self.betaLayer = nn.Conv1d(256,256,kernel_size=1)
+        self.gammaLayer = nn.Conv1d(256, 256, kernel_size=1)
+        self.betaLayer = nn.Conv1d(256, 256, kernel_size=1)
         self.cbn = nn.BatchNorm1d(256, affine=False, track_running_stats=True)
-        self.fc1 = nn.Conv1d(3,256,kernel_size=1)
-        self.fc2 = nn.Conv1d(256,1,kernel_size=1)
+        self.fc1 = nn.Conv1d(3, 256, kernel_size=1)
+        self.fc2 = nn.Conv1d(256, 1, kernel_size=1)
 
     def makeBlocks(self):
         blocks = []
@@ -154,17 +154,17 @@ class OccupancyModel(nn.Module):
             blocks.append(Block())
         return nn.Sequential(*blocks)
 
-    def forward(self, x, img):
-        img = self.encoderModel(img)
-        img = self.fc_enc(img)
-        img = img.view(-1, 256, 1)
+    def forward(self, x):
+        pts = self.encoderModel(x)
+        pts = self.fc_enc(x)
+        pts = pts.view(-1, 256, 1)
         x = self.fc1(x)
         # 5 pre-activation ResNet-blocks
-        x = self.blocks({'enc': img, 'ex': x})
+        x = self.blocks({'enc': pts, 'ex': x})
         x = x['ex']
         # CBN
-        gamma = self.gammaLayer(img)
-        beta = self.betaLayer(img)
+        gamma = self.gammaLayer(pts)
+        beta = self.betaLayer(pts)
         x = gamma * self.cbn(x) + beta
         x = F.relu(x)
         x = self.fc2(x)

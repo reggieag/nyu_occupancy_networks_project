@@ -31,7 +31,7 @@ def train(epoch, model, trainloader, optimizer):
         occupancies = occupancies.view(-1, K, 1).cuda()
         optimizer.zero_grad()
 
-        pred = model(pts)  # a probability for each point, and the dist parameters of latent distribution
+        pred = model(pts)
         pred = pred.permute(0, 2, 1, 3).squeeze(-1)
 
         loss = modelCriterion(pred, occupancies)
@@ -52,13 +52,13 @@ if __name__ == "__main__":
     print(f"loading train.lst for dir {shapenet_class_dir}")
     train_loader = generate_data_loader(shapenet_class_dir, 'train.lst')
 
+    # # Get the validation data
+    # print(f"loading val.lst for dir {shapenet_class_dir}")
+    # validation_loader = generate_data_loader(shapenet_class_dir, 'val.lst')
+
     model = OccupancyModel()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
     for epoch in range(1):
         train(epoch, model, train_loader, optimizer)
 
-
-    # # Get the validation data
-    # print(f"loading val.lst for dir {shapenet_class_dir}")
-    # validation_loader = generate_data_loader(shapenet_class_dir, 'val.lst')
