@@ -1,31 +1,36 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.optim as optim
-import numpy
-from PIL import Image
-import io
 
 
-class ResNetBlock(nn.Module):
-    def __init__(self):
-        super(ResNetBlock, self).__init__()
-        self.fc1 = nn.Conv2d(256, 256, kernel_size=1)
-        self.fc2 = nn.Conv2d(256, 256, kernel_size=1)
+class ResnetBlock(nn.Module):
+    def __init__(self, size_in, size_out):
+        super().__init__()
+        size_h = min(size_in, size_out)
+
+        self.fc_0 = nn.Linear(size_in, size_h)
+        self.fc_1 = nn.Linear(size_h, size_out)
+        self.fc_2 = nn.Linear(size_in, size_out, bias=False)
+        self.relu = nn.ReLU()
 
     def forward(self, x):
-        x = self.fc1(F.relu(x))
-        x = self.fc2(F.relu(x))
+        dx = self.fc_0(self.relu(x))
+        dx = self.fc_1(self.relu(dx))
+
+        x_skip = self.fc_2(x)
+
+        return x_skip + dx
 
 
 class PointNetEncoder(nn.Module):
     def __init__(self):
         super(PointNetEncoder, self).__init__()
-        self.fc1 = nn.Linear(3, 128)
-        self.fc2 = nn.Linear(128, 128)
-        self.fc3 = nn.Linear(256, 128)
-        self.fc4 = nn.Linear(256, 128)
-        self.fc5 = nn.Linear(128, 128)
+        self.fc1 = nn.Linear(3, 256)
+        self.resnet_1 = ResnetBlock(256, 128)
+        self.resnet_2 = ResnetBlock(256, 128)
+        self.resnet_3 = ResnetBlock(256, 128)
+        self.resnet_4 = ResnetBlock(256, 128)
+        self.fc_final = nn.Linear(128, 256)
 
     def forward(self, x):
         x = x.squeeze()
@@ -34,7 +39,7 @@ class PointNetEncoder(nn.Module):
 
         x = F.relu(self.fc1(x))
 
-        x = self.fc2(x)
+        x = self.resnet_1(x)
 
         n, k, c = x.size()
         x = x.permute(0, 2, 1)
@@ -46,34 +51,38 @@ class PointNetEncoder(nn.Module):
 
         x = F.relu(x)
 
-        x = self.fc3(x)
+        x = self.resnet_2(x)
 
         n, k, c = x.size()
 
         x = x.permute(0, 2, 1)
 
-        pooled = F.max_pool1d(x, k)
-        pooled = pooled.expand(x.size())
-
+        pooled = F.max_pool1d(x, k).expand(x.size())
         x = torch.cat([x, pooled], dim=1)
 
         x = x.permute(0, 2, 1)
 
         x = F.relu(x)
-        x = self.fc4(x)
+        x = self.resnet_3(x)
 
         n, k, c = x.size()
 
         x = x.permute(0, 2, 1)
 
+        pooled = F.max_pool1d(x, k).expand(x.size())
+        x = torch.cat([x, pooled], dim=1)
+
+        x = x.permute(0, 2, 1)
+
+        x = self.resnet_4(x)
+
         x = F.max_pool1d(x, k)
 
         x = x.squeeze()
 
-        mean = self.mean_fc(x)
-        stddev = self.logstddev_fc(x)
+        pts = self.fc_final(F.relu(x))
 
-        return mean, stddev
+        return pts
 
 
 class Block(nn.Module):
@@ -126,16 +135,18 @@ class Block(nn.Module):
 
         return {'ex': out, 'enc': encoding}
 
+
 class OccupancyModel(nn.Module):
-    def __init__(self, encoder):
+    def __init__(self):
         super(OccupancyModel, self).__init__()
         self.blocks = self.makeBlocks()
-        self.encoderModel = encoder
-        self.gammaLayer = nn.Conv1d(128, 256, kernel_size=1)
-        self.betaLayer = nn.Conv1d(128, 256, kernel_size=1)
-        self.cbn = nn.BatchNorm2d(256, affine=False, track_running_stats=True)
-        self.fc1 = nn.Conv2d(3, 256, kernel_size=1)
-        self.fc2 = nn.Conv2d(256, 1, kernel_size=1)
+        self.encoderModel = PointNetEncoder()
+        # self.fc_enc = nn.Linear(128, 256)  # there's a fc layer in the pointnetencoder so don't know if we need this.
+        self.gammaLayer = nn.Conv1d(256,256,kernel_size=1)
+        self.betaLayer = nn.Conv1d(256,256,kernel_size=1)
+        self.cbn = nn.BatchNorm1d(256, affine=False, track_running_stats=True)
+        self.fc1 = nn.Conv1d(3,256,kernel_size=1)
+        self.fc2 = nn.Conv1d(256,1,kernel_size=1)
 
     def makeBlocks(self):
         blocks = []
@@ -143,37 +154,20 @@ class OccupancyModel(nn.Module):
             blocks.append(Block())
         return nn.Sequential(*blocks)
 
-    def sampleFromZDist(self, z):
-        mean, logstddev = z
-        std = logstddev.mul(0.5).exp_()
-        eps = torch.randn_like(logstddev, requires_grad=True)
-        return eps.mul(std).add_(mean)
-
-    def forward(self, x, z_eval=None):
-        if self.training:
-            z_dist = self.encoderModel(x)
-            z = self.sampleFromZDist(z_dist)
-            z = z.unsqueeze(-1)
-        else:
-            z = z_eval
-            z_dist = (0, 1)
+    def forward(self, x, img):
+        img = self.encoderModel(img)
+        # img = self.fc_enc(img)
+        img = img.view(-1, 256, 1)
         x = self.fc1(x)
         # 5 pre-activation ResNet-blocks
-        x = self.blocks({'enc': z, 'ex': x})
+        x = self.blocks({'enc': img, 'ex': x})
         x = x['ex']
-        n, c, k, d = x.size()
-
         # CBN
-        gamma = self.gammaLayer(z)
-
-        gamma = torch.stack([gamma for _ in range(k)], dim=2)
-
-        beta = self.betaLayer(z)
-        beta = torch.stack([beta for _ in range(k)], dim=2)
-
-        x = gamma.mul(self.cbn(x)).add_(beta)
+        gamma = self.gammaLayer(img)
+        beta = self.betaLayer(img)
+        x = gamma * self.cbn(x) + beta
         x = F.relu(x)
         x = self.fc2(x)
-        # x = x.view(-1,1)
-        # x = torch.sigmoid(x)
-        return x, z_dist
+        x = x.view(-1, 1)
+        x = torch.sigmoid(x)
+        return x

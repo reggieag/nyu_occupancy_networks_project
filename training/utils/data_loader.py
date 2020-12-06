@@ -1,6 +1,7 @@
-from utils.constants import K
+from utils.constants import K, BATCH_SIZE
 import torch
 import numpy
+import os
 
 
 # One DataSetClass per subdirectory in a category, will return "K" point samples and a single image randomly
@@ -20,3 +21,15 @@ class DataSetClass(torch.utils.data.Dataset):
 
     def __getitem__(self, idx):
         return self.pts[idx * self.K:(idx * self.K + self.K)], self.occupancies[idx * self.K:(idx * self.K + self.K)]
+
+
+def load_list_dirs(dir, list_file):
+    with open(os.path.join(dir, list_file)) as train_list:
+        return [train_dir for train_dir in train_list.readlines()]
+
+
+def generate_data_loader(dir, list_file):
+    dirs = load_list_dirs(dir, list_file)
+    datasets = [DataSetClass(dir) for dir in dirs]
+    data = torch.utils.data.ConcatDataset(datasets)
+    return torch.utils.data.DataLoader(data, batch_size=BATCH_SIZE, shuffle=True)
