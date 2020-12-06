@@ -50,7 +50,8 @@ def train(epoch, model, trainloader, optimizer):
         #     print("Saving to model3.pth")
         #     torch.save(model.state_dict(), "unconditional_model3.pth")
 
-if __name__ == '__main__()':
+
+if __name__ == "__main__":
     shapenet_class_dir = os.path.join(SHAPENET_DIR, SHAPENET_CLASS)
 
     # catalogue all of the directories with the chosen category
@@ -60,5 +61,3 @@ if __name__ == '__main__()':
     # Get the validation data
     print(f"loading val.lst for dir {shapenet_class_dir}")
     validation_loader = generate_data_loader(shapenet_class_dir, 'val.lst')
-
-    train(1, 'test', train_loader, )
