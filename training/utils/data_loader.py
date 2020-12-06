@@ -23,13 +23,13 @@ class DataSetClass(torch.utils.data.Dataset):
         return self.pts[idx * self.K:(idx * self.K + self.K)], self.occupancies[idx * self.K:(idx * self.K + self.K)]
 
 
-def load_list_dirs(dir, list_file):
-    with open(os.path.join(dir, list_file)) as train_list:
-        return [train_dir for train_dir in train_list.readlines()]
+def load_list_dirs(top_dir, list_file):
+    with open(os.path.join(top_dir, list_file)) as train_list:
+        return [os.path.join(top_dir, train_dir) for train_dir in train_list.readlines()]
 
 
-def generate_data_loader(dir, list_file):
-    dirs = load_list_dirs(dir, list_file)
+def generate_data_loader(top_dir, list_file):
+    dirs = load_list_dirs(top_dir, list_file)
     datasets = [DataSetClass(dir.rstrip()) for dir in dirs]
     data = torch.utils.data.ConcatDataset(datasets)
     return torch.utils.data.DataLoader(data, batch_size=BATCH_SIZE, shuffle=True)
