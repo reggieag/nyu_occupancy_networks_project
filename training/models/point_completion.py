@@ -160,6 +160,7 @@ class OccupancyModel(nn.Module):
     def forward(self, x):
         print(f"x.shape  at beginning of forward is {x.shape}")
         pts = self.encoderModel(x)
+        print(f"x.shape after encoding is {x.shape}")
         # pts = self.fc_enc(x)
         pts = pts.view(-1, 256, 1)
         x = self.fc1(x)
