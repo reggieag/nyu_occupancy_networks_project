@@ -1,4 +1,4 @@
-from utils.constants import K, BATCH_SIZE
+from utils.constants import K, BATCH_SIZE, POINTCLOUD_N
 import torch
 import numpy
 import os
@@ -15,12 +15,19 @@ class DataSetClass(torch.utils.data.Dataset):
                                             dtype=torch.float)
         self.K = K
         self.length = int(self.occupancies.size()[0] / self.K)
+        self.point_cloud = None
 
     def __len__(self):
         return self.length
 
     def __getitem__(self, idx):
-        return self.pts[idx * self.K:(idx * self.K + self.K)], self.occupancies[idx * self.K:(idx * self.K + self.K)]
+        # pick POINTCLOUD_N random points for the pointcloud
+        print(f"self.pts.shape is {self.pts.shape}")
+        point_cloud_indicies = numpy.random.randint(self.pts.shape[0], size=POINTCLOUD_N)
+        self.point_cloud = self.pts[point_cloud_indicies, :]
+
+        # return pts, occupancies, and a pointcloud
+        return self.pts[idx * self.K:(idx * self.K + self.K)], self.occupancies[idx * self.K:(idx * self.K + self.K)], self.point_cloud
 
 
 def load_list_dirs(top_dir, list_file):
