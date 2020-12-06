@@ -29,7 +29,7 @@ def load_list_dirs(top_dir, list_file):
 
 
 def generate_data_loader(top_dir, list_file):
-    dirs = load_list_dirs(top_dir, list_file)
-    datasets = [DataSetClass(dir.rstrip()) for dir in dirs]
+    image_dirs = load_list_dirs(top_dir, list_file)
+    datasets = [DataSetClass(image_dir.rstrip()) for image_dir in image_dirs]
     data = torch.utils.data.ConcatDataset(datasets)
     return torch.utils.data.DataLoader(data, batch_size=BATCH_SIZE, shuffle=True)

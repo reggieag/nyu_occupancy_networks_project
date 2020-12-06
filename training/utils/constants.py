@@ -1,3 +1,3 @@
-K = 64
+K = 300
 BATCH_SIZE = 64
 DEVICE = 'cuda'

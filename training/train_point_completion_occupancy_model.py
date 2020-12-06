@@ -56,7 +56,13 @@ if __name__ == "__main__":
 
     # catalogue all of the directories with the chosen category
     print(f"loading train.lst for dir {shapenet_class_dir}")
-    train_loader = generate_data_loader(shapenet_class_dir, 'train.lst')
+    train_loader = generate_data_loader('/scratch/rag551/occupancy_networks/ShapeNet/04256520', 'train.lst')
+
+# for batch_idx, data in enumerate(train_loader):
+#     (pts, occupancies) = data
+#     break
+#     print(pts)
+#     print(occupancies)
 
     # Get the validation data
     print(f"loading val.lst for dir {shapenet_class_dir}")
