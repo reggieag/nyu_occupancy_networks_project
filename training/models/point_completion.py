@@ -34,7 +34,6 @@ class PointNetEncoder(nn.Module):
 
     def forward(self, x):
         x = x.squeeze()
-        n, c, k = x.size()
         x = x.permute(0, 2, 1)
 
         x = F.relu(self.fc1(x))
@@ -76,7 +75,7 @@ class PointNetEncoder(nn.Module):
 
         x = self.resnet_4(x)
 
-        x = F.max_pool1d(x, k)
+        x = F.max_pool1d(x, dim=1)
 
         x = x.squeeze()
 
