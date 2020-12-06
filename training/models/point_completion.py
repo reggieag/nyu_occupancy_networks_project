@@ -30,7 +30,7 @@ class PointNetEncoder(nn.Module):
         self.resnet_2 = ResnetBlock(512, 256)
         self.resnet_3 = ResnetBlock(512, 256)
         self.resnet_4 = ResnetBlock(512, 256)
-        self.fc_final = nn.Linear(512, 512)
+        self.fc_final = nn.Linear(256, 256)
 
     def forward(self, x):
         x = x.squeeze()
@@ -144,7 +144,7 @@ class OccupancyModel(nn.Module):
         super(OccupancyModel, self).__init__()
         self.blocks = self.makeBlocks()
         self.encoderModel = PointNetEncoder()
-        self.fc_enc = nn.Linear(512, 256)  # there's a fc layer in the pointnetencoder so don't know if we need this.
+        # self.fc_enc = nn.Linear(512, 256)  # there's a fc layer in the pointnetencoder so don't know if we need this.
         self.gammaLayer = nn.Conv1d(256, 256, kernel_size=1)
         self.betaLayer = nn.Conv1d(256, 256, kernel_size=1)
         self.cbn = nn.BatchNorm1d(256, affine=False, track_running_stats=True)
@@ -159,7 +159,7 @@ class OccupancyModel(nn.Module):
 
     def forward(self, x):
         pts = self.encoderModel(x)
-        pts = self.fc_enc(x)
+        # pts = self.fc_enc(x)
         pts = pts.view(-1, 256, 1)
         x = self.fc1(x)
         # 5 pre-activation ResNet-blocks
