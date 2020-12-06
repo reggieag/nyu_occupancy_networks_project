@@ -74,8 +74,11 @@ class PointNetEncoder(nn.Module):
         x = x.permute(0, 2, 1)
 
         x = self.resnet_4(x)
+        n, k, c = x.size()
 
-        x = F.max_pool1d(x, dim=1)
+        print(f"x is {x}")
+        print(f"k is {k}")
+        x = F.max_pool1d(x, k)
 
         x = x.squeeze()
 
