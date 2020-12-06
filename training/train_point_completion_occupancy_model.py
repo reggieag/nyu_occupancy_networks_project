@@ -57,6 +57,7 @@ if __name__ == "__main__":
     # validation_loader = generate_data_loader(shapenet_class_dir, 'val.lst')
 
     model = OccupancyModel()
+    model.cuda()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
     for epoch in range(1):
