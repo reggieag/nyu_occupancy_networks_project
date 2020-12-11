@@ -43,7 +43,7 @@ struct Face{
 class MarchingCubes{
 public:
   //Divides the canonical cube into a grid of cubes
-  static std::vector<Cube> generateCubes();
+  static std::vector<Cube> generateCubes(std::string gridPtsFile);
   
   //computes occupancy values for each vertex in each cube given implicit meshBoundary function
   static void computeOccupancies(std::vector<Cube> &cubes, std::function<bool (float, float, float)> meshBoundary);

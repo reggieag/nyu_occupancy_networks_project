@@ -341,14 +341,16 @@ void readCoordinatesFromFile(std::vector<Cube> &cubes, std::string pointsFile){
 }
 
 
-std::vector<Cube> MarchingCubes::generateCubes(){
+std::vector<Cube> MarchingCubes::generateCubes(std::string gridPtsFile=""){
   std::vector<Cube> cubes;
   //std::string gridpointsFile = "/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/evaluation/winegrid.txt";
   //std::string gridpointsFile = "/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/evaluation/coords.txt";
-  std::string gridpointsFile = "/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/MarchingCubes/src/32CubedGrid.txt";
+  std::string defaultgridpointsFile = "/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/MarchingCubes/src/32CubedGrid.txt";
   //std::string gridpointsFile = "/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/evaluation/agrid_32_5.txt";
-
-  readCoordinatesFromFile(cubes, gridpointsFile);
+  if(!gridPtsFile.empty())
+    readCoordinatesFromFile(cubes, gridPtsFile);
+  else
+    readCoordinatesFromFile(cubes, defaultgridpointsFile);
   return cubes;
 
 }
@@ -359,7 +361,7 @@ std::vector<Cube> MarchingCubes::assembleCubes(std::string pointsFile, std::stri
   std::vector<Cube> cubes;
   readCoordinatesFromFile(cubes, pointsFile);
 
-  float threshold = 0.1;
+  float threshold = 0.3;
   std::ifstream occFile;
   occFile.open(occupanciesFile, std::ifstream::in);
 

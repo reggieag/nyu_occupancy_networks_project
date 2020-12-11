@@ -41,22 +41,43 @@ bool wineglass(float x,float y, float z){
 
 int main(int argc, char *argv[]) {
 
-  //std::vector<Cube> cubes = MarchingCubes::assembleCubes("/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/evaluation/bench_ag_32_3.txt",
-  //                                                       "/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/evaluation/bench_ag_preds_32_3.txt");
+  std::string gridPtsFile;
+  std::string predsFile;
+  std::vector<Cube> cubes ;
+  if (argc > 1){
+    if(argc > 2){
+      gridPtsFile = argv[1];
+      predsFile = argv[2];
+      cubes =  MarchingCubes::assembleCubes(gridPtsFile, predsFile);
+      if(argc > 3){
+        std::string meshName = "mesh" + std::string(argv[3]) + ".off";
+        MarchingCubes::march(cubes, meshName);
+        }
+      else
+        MarchingCubes::march(cubes,"mesh.off");
+    }
+    else{
+   gridPtsFile = argv[1];
+   cubes = MarchingCubes::generateCubes(gridPtsFile);
+   using namespace std::placeholders;
+   MarchingCubes::computeOccupancies(cubes, std::bind(sphere, _1,_2,_3,1.0));
+   MarchingCubes::march(cubes, "mesh.off");
+   }
+  }
+  else{ //default hardcode
 
+    std::vector<Cube> cubes = MarchingCubes::assembleCubes("/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/evaluation/bench_ag_32_3.txt",
+                                                           "/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/evaluation/couch_interp/couch_ag_preds_32_zero.txt");
 
+    //std::vector<Cube> cubes = MarchingCubes::generateCubes();
+    //using namespace std::placeholders;
+    //MarchingCubes::computeOccupancies(cubes, std::bind(sphere, _1,_2,_3,1.0));
+    //MarchingCubes::computeOccupancies(cubes, std::bind(sphereWithHole, _1,_2,_3,1.0,0.1));
+    //MarchingCubes::computeOccupancies(cubes, std::bind(torus, _1,_2,_3,0.5,0.4));
+    //MarchingCubes::computeOccupancies(cubes, std::bind(genus2, _1,_2,_3));
+    //MarchingCubes::computeOccupancies(cubes, std::bind(wineglass, _1,_2,_3));
 
-  std::vector<Cube> cubes = MarchingCubes::generateCubes();
-  using namespace std::placeholders;
-  //MarchingCubes::computeOccupancies(cubes, std::bind(sphere, _1,_2,_3,1.0));
-  //MarchingCubes::computeOccupancies(cubes, std::bind(sphereWithHole, _1,_2,_3,1.0,0.1));
-  //MarchingCubes::computeOccupancies(cubes, std::bind(torus, _1,_2,_3,0.5,0.4));
-  //MarchingCubes::computeOccupancies(cubes, std::bind(genus2, _1,_2,_3));
-  //MarchingCubes::computeOccupancies(cubes, std::bind(wineglass, _1,_2,_3));
-
-  MarchingCubes::march(cubes, "sphere.off");
-
-
-
-  return 0;
+    MarchingCubes::march(cubes, "couch_zero.off");
+  }
+  return 1;
 }
