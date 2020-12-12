@@ -164,7 +164,10 @@ class OccupancyModel(nn.Module):
         pt_cloud = self.encoderModel(pointcloud)
         print(f"x.shape after encoding is {x.shape}")
         # pts = self.fc_enc(x)
+        print("View effect is:")
+        print(pt_cloud.shape)
         pt_cloud = pt_cloud.view(-1, 256, 1)
+        print(pt_cloud.shape)
         x = self.fc1(x)
         # 5 pre-activation ResNet-blocks
         x = self.blocks({'enc': pt_cloud, 'ex': x})
