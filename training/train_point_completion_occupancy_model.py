@@ -67,14 +67,9 @@ if __name__ == "__main__":
     print(f"loading train.lst for dir {shapenet_class_dir}")
     train_loader = generate_data_loader(shapenet_class_dir, 'train.lst')
 
-    # # Get the validation data
-    # print(f"loading val.lst for dir {shapenet_class_dir}")
-    # validation_loader = generate_data_loader(shapenet_class_dir, 'val.lst')
-
     model = OccupancyModel()
     model.cuda()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
     for epoch in range(1):
         train(epoch, model, train_loader, optimizer)
-
