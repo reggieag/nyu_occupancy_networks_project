@@ -30,7 +30,7 @@ class PointNetEncoder(nn.Module):
         self.resnet_2 = ResnetBlock(512, 256)
         self.resnet_3 = ResnetBlock(512, 256)
         self.resnet_4 = ResnetBlock(512, 256)
-        self.fc_final = nn.Linear(256, 512)
+        self.fc_final = nn.Linear(256, 256)
 
     def forward(self, x):
         x = x.squeeze()
@@ -84,7 +84,7 @@ class PointNetEncoder(nn.Module):
         x = F.max_pool1d(x, k)
 
         x = x.squeeze()
-        print(f"x.shape is {x.shape}")
+        # print(f"x.shape is {x.shape}")
         pts = self.fc_final(x)
 
         return pts
@@ -93,14 +93,14 @@ class PointNetEncoder(nn.Module):
 class Block(nn.Module):
     def __init__(self):
         super(Block, self).__init__()
-        self.fc1 = nn.Conv2d(512, 512, kernel_size=1)
-        self.fc2 = nn.Conv2d(512, 512, kernel_size=1)
-        self.bn1 = nn.BatchNorm2d(512, affine=False, track_running_stats=True)
-        self.bn2 = nn.BatchNorm2d(512, affine=False, track_running_stats=True)
-        self.gammaLayer1 = nn.Conv1d(512, 64, kernel_size=1)
-        self.gammaLayer2 = nn.Conv1d(512, 64, kernel_size=1)
-        self.betaLayer1 = nn.Conv1d(512, 64, kernel_size=1)
-        self.betaLayer2 = nn.Conv1d(512, 64, kernel_size=1)
+        self.fc1 = nn.Conv2d(256, 256, kernel_size=1)
+        self.fc2 = nn.Conv2d(256, 256, kernel_size=1)
+        self.bn1 = nn.BatchNorm2d(256, affine=False, track_running_stats=True)
+        self.bn2 = nn.BatchNorm2d(256, affine=False, track_running_stats=True)
+        self.gammaLayer1 = nn.Conv1d(512, 256, kernel_size=1)
+        self.gammaLayer2 = nn.Conv1d(512, 256, kernel_size=1)
+        self.betaLayer1 = nn.Conv1d(512, 256, kernel_size=1)
+        self.betaLayer2 = nn.Conv1d(512, 256, kernel_size=1)
 
     def forward(self, y):
         x = y['ex']
@@ -108,7 +108,6 @@ class Block(nn.Module):
         # n, c, k = x.size()
 
         encoding = y['enc']
-        encoding = encoding.view(-1, 512, 1)
         gamma = self.gammaLayer1(encoding)
 
         # Need to stack the beta and gamma
