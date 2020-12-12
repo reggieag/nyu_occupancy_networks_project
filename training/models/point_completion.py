@@ -150,9 +150,9 @@ class OccupancyModel(nn.Module):
         # self.fc_enc = nn.Linear(512, 256)  # there's a fc layer in the pointnetencoder so don't know if we need this.
         self.gammaLayer = nn.Conv1d(256, 256, kernel_size=1)
         self.betaLayer = nn.Conv1d(256, 256, kernel_size=1)
-        self.cbn = nn.BatchNorm1d(256, affine=False, track_running_stats=True)
-        self.fc1 = nn.Conv1d(3, 256, kernel_size=1)
-        self.fc2 = nn.Conv1d(256, 1, kernel_size=1)
+        self.cbn = nn.BatchNorm2d(256, affine=False, track_running_stats=True)
+        self.fc1 = nn.Conv2d(3, 256, kernel_size=1)
+        self.fc2 = nn.Conv2d(256, 1, kernel_size=1)
 
     def makeBlocks(self):
         blocks = []
@@ -168,7 +168,7 @@ class OccupancyModel(nn.Module):
         # pts = self.fc_enc(x)
         # print("View effect is:")
         print(pt_cloud.shape)
-        pt_cloud = pt_cloud.view(-1, 128, 1) # i uncommented this because i don't know why i need it
+        pt_cloud = pt_cloud.view(-1, 128, 1) # Add's another dimension? dunno why
         print(pt_cloud.shape)
         x = self.fc1(x)
         # 5 pre-activation ResNet-blocks
