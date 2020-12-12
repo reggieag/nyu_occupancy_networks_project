@@ -33,7 +33,7 @@ class PointNetEncoder(nn.Module):
         self.fc_final = nn.Linear(256, 128)
 
     def forward(self, x):
-        # x = x.squeeze()
+        x = x.squeeze()
         x = x.permute(0, 2, 1)
 
         x = F.relu(self.fc1(x))
@@ -102,8 +102,8 @@ class Block(nn.Module):
 
     def forward(self, y):
         x = y['ex']
-        # n, c, k, d = x.size()
-        n, c, k = x.size()
+        n, c, k, d = x.size()
+        # n, c, k = x.size()
 
         encoding = y['enc']
         gamma = self.gammaLayer1(encoding)
