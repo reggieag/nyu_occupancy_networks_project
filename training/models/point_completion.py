@@ -93,8 +93,8 @@ class PointNetEncoder(nn.Module):
 class Block(nn.Module):
     def __init__(self):
         super(Block, self).__init__()
-        self.fc1 = nn.Conv2d(256, 512, kernel_size=1)
-        self.fc2 = nn.Conv2d(256, 512, kernel_size=1)
+        self.fc1 = nn.Conv2d(512, 512, kernel_size=1)
+        self.fc2 = nn.Conv2d(512, 512, kernel_size=1)
         self.bn1 = nn.BatchNorm2d(512, affine=False, track_running_stats=True)
         self.bn2 = nn.BatchNorm2d(512, affine=False, track_running_stats=True)
         self.gammaLayer1 = nn.Conv1d(512, 64, kernel_size=1)
