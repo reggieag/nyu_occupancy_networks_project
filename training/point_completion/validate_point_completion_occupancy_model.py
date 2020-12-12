@@ -14,7 +14,7 @@ SHAPENET_DIR = "/scratch/rag551/occupancy_networks/ShapeNet"
 #     '02958343'
 # ]
 
-SHAPENET_CLASS = '04256520'  # couches
+SHAPENET_CLASS = '04401088'  # electronics
 
 MODEL_FILENAME = 'point_completion_model.pth'
 
