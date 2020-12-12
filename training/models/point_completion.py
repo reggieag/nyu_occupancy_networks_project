@@ -33,13 +33,16 @@ class PointNetEncoder(nn.Module):
         self.fc_final = nn.Linear(256, 256)
 
     def forward(self, x):
+        print(x.shape)
         x = x.squeeze()
         x = x.permute(0, 1)
-
+        print(x.shape)
         x = F.relu(self.fc1(x))
-
+        print(x.shape)
         x = self.resnet_1(x)
 
+        print(x.shape)
+        print(x.size())
         n, k, c = x.size()
         x = x.permute(0, 1)
 
