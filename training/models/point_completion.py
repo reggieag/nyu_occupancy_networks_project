@@ -97,10 +97,10 @@ class Block(nn.Module):
         self.fc2 = nn.Conv2d(256, 256, kernel_size=1)
         self.bn1 = nn.BatchNorm2d(256, affine=False, track_running_stats=True)
         self.bn2 = nn.BatchNorm2d(256, affine=False, track_running_stats=True)
-        self.gammaLayer1 = nn.Conv1d(128, 256, kernel_size=1)
-        self.gammaLayer2 = nn.Conv1d(128, 256, kernel_size=1)
-        self.betaLayer1 = nn.Conv1d(128, 256, kernel_size=1)
-        self.betaLayer2 = nn.Conv1d(128, 256, kernel_size=1)
+        self.gammaLayer1 = nn.Conv1d(256, 256, kernel_size=1)
+        self.gammaLayer2 = nn.Conv1d(256, 256, kernel_size=1)
+        self.betaLayer1 = nn.Conv1d(256, 256, kernel_size=1)
+        self.betaLayer2 = nn.Conv1d(256, 256, kernel_size=1)
 
     def forward(self, y):
         x = y['ex']
@@ -164,7 +164,6 @@ class OccupancyModel(nn.Module):
         print(f"x.shape  at beginning of forward is {x.shape}")
         print(f"pointcloud.shape  at beginning of forward is {pointcloud.shape}")
         pt_cloud = self.encoderModel(pointcloud)
-        print(f"x.shape after encoding is {x.shape}")
         # pts = self.fc_enc(x)
         # print("View effect is:")
         print(pt_cloud.shape)
