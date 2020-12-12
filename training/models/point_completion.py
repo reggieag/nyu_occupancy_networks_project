@@ -30,7 +30,7 @@ class PointNetEncoder(nn.Module):
         self.resnet_2 = ResnetBlock(512, 256)
         self.resnet_3 = ResnetBlock(512, 256)
         self.resnet_4 = ResnetBlock(512, 256)
-        self.fc_final = nn.Linear(256, 256)
+        self.fc_final = nn.Linear(256, 128)
 
     def forward(self, x):
         # x = x.squeeze()
