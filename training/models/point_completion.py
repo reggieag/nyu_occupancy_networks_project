@@ -83,7 +83,7 @@ class PointNetEncoder(nn.Module):
         # print(f"k is {k}")
         x = F.max_pool1d(x, k)
 
-        x = x.squeeze()
+        # x = x.squeeze()
         # print(f"x.shape is {x.shape}")
         pts = self.fc_final(x)
 
@@ -97,10 +97,10 @@ class Block(nn.Module):
         self.fc2 = nn.Conv2d(256, 256, kernel_size=1)
         self.bn1 = nn.BatchNorm2d(256, affine=False, track_running_stats=True)
         self.bn2 = nn.BatchNorm2d(256, affine=False, track_running_stats=True)
-        self.gammaLayer1 = nn.Conv1d(64, 256, kernel_size=1)
-        self.gammaLayer2 = nn.Conv1d(64, 256, kernel_size=1)
-        self.betaLayer1 = nn.Conv1d(64, 256, kernel_size=1)
-        self.betaLayer2 = nn.Conv1d(64, 256, kernel_size=1)
+        self.gammaLayer1 = nn.Conv1d(64, 512, kernel_size=1)
+        self.gammaLayer2 = nn.Conv1d(64, 512, kernel_size=1)
+        self.betaLayer1 = nn.Conv1d(64, 512, kernel_size=1)
+        self.betaLayer2 = nn.Conv1d(64, 512, kernel_size=1)
 
     def forward(self, y):
         x = y['ex']
@@ -108,6 +108,7 @@ class Block(nn.Module):
         # n, c, k = x.size()
 
         encoding = y['enc']
+        encoding.permute(1, 0)
         gamma = self.gammaLayer1(encoding)
 
         # Need to stack the beta and gamma
