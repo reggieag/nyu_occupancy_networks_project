@@ -108,7 +108,7 @@ class Block(nn.Module):
         # n, c, k = x.size()
 
         encoding = y['enc']
-        encoding.view(-1, 512, 1)
+        encoding = encoding.view(-1, 512, 1)
         gamma = self.gammaLayer1(encoding)
 
         # Need to stack the beta and gamma
