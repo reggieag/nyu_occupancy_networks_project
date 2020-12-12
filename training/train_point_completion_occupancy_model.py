@@ -44,9 +44,9 @@ def train(epoch, model, trainloader, optimizer):
         optimizer.zero_grad()
 
         pred = model(pts, pointcloud)
-        # print(f"pred.shape before permute {pred.shape}")
+        print(f"pred.shape before permute {pred.shape}")
         pred = pred.permute(0,2,1,3).squeeze(-1)
-        # print(f"pred.shape after permute {pred.shape}")
+        print(f"pred.shape after permute {pred.shape}")
 
         loss = modelCriterion(pred, occupancies)
         loss.backward()
