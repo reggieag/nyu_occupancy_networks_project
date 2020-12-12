@@ -34,9 +34,9 @@ class PointNetEncoder(nn.Module):
 
     def forward(self, x):
         x = x.squeeze()
-        print(x.shape)
+        # print(x.shape)
         x = x.permute(0, 2, 1)
-        print(x.shape)
+        # print(x.shape)
 
         x = F.relu(self.fc1(x))
 
@@ -162,14 +162,14 @@ class OccupancyModel(nn.Module):
 
     def forward(self, x, pointcloud):
         n, c, k, d = x.size()
-        print(f"x.shape  at beginning of forward is {x.shape}")
-        print(f"pointcloud.shape  at beginning of forward is {pointcloud.shape}")
+        # print(f"x.shape  at beginning of forward is {x.shape}")
+        # print(f"pointcloud.shape  at beginning of forward is {pointcloud.shape}")
         pt_cloud = self.encoderModel(pointcloud)
         # pts = self.fc_enc(x)
         # print("View effect is:")
-        print(pt_cloud.shape)
+        # print(pt_cloud.shape)
         pt_cloud = pt_cloud.view(-1, 256, 1) # Add's another dimension? dunno why
-        print(pt_cloud.shape)
+        # print(pt_cloud.shape)
         x = self.fc1(x)
         # 5 pre-activation ResNet-blocks
         x = self.blocks({'enc': pt_cloud, 'ex': x})
@@ -179,10 +179,10 @@ class OccupancyModel(nn.Module):
         gamma = torch.stack([gamma for _ in range(k)], dim=2)
         beta = self.betaLayer(pt_cloud)
         beta = torch.stack([beta for _ in range(k)], dim=2)
-        x =gamma.mul(self.cbn(x)).add_(beta)
+        x = gamma.mul(self.cbn(x)).add_(beta)
         x = F.relu(x)
         x = self.fc2(x)
         x = x.view(-1, 1)
         x = torch.sigmoid(x)
-        print(f"x.shape at end of forward is {x.shape}")
+        # print(f"x.shape at end of forward is {x.shape}")
         return x
