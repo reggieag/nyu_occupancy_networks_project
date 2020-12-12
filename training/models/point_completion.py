@@ -33,56 +33,51 @@ class PointNetEncoder(nn.Module):
         self.fc_final = nn.Linear(256, 256)
 
     def forward(self, x):
-        print(x.shape)
-        x = x.squeeze()
-        x = x.permute(0, 1)
-        print(x.shape)
+        # x = x.squeeze()
+        x = x.permute(0, 2, 1)
+
         x = F.relu(self.fc1(x))
-        print(x.shape)
+
         x = self.resnet_1(x)
 
-        print(x.shape)
-        print(x.size())
-        n, k = x.size()
-        x = x.permute(0, 1)
-        print(n, k)
-        print(x.shape)
-        print(x.size())
+        n, k, c = x.size()
+        x = x.permute(0, 2, 1)
+
         pooled = F.max_pool1d(x, k).expand(x.size())
         x = torch.cat([x, pooled], dim=1)
 
-        x = x.permute(0, 1)
+        x = x.permute(0, 2, 1)
 
         x = F.relu(x)
 
         x = self.resnet_2(x)
 
-        n, k = x.size()
+        n, k, c = x.size()
 
-        x = x.permute(0, 1)
+        x = x.permute(0, 2, 1)
 
         pooled = F.max_pool1d(x, k).expand(x.size())
         x = torch.cat([x, pooled], dim=1)
 
-        x = x.permute(0, 1)
+        x = x.permute(0, 2, 1)
 
         x = F.relu(x)
         x = self.resnet_3(x)
 
-        n, k = x.size()
+        n, k, c = x.size()
 
-        x = x.permute(0, 1)
+        x = x.permute(0, 2, 1)
 
         pooled = F.max_pool1d(x, k).expand(x.size())
         x = torch.cat([x, pooled], dim=1)
 
-        x = x.permute(0, 1)
+        x = x.permute(0, 2, 1)
 
         x = self.resnet_4(x)
-        n, k = x.size()
-        x = x.permute(0, 1)
+        n, k, c = x.size()
+        x = x.permute(0, 2, 1)
 
-        print(f"x.shape is {x.shape}")
+        # print(f"x.shape is {x.shape}")
         # print(f"k is {k}")
         x = F.max_pool1d(x, k)
 
