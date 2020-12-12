@@ -43,7 +43,7 @@ class PointNetEncoder(nn.Module):
 
         print(x.shape)
         print(x.size())
-        n, k, c = x.size()
+        n, k = x.size()
         x = x.permute(0, 1)
 
         pooled = F.max_pool1d(x, k).expand(x.size())
@@ -55,7 +55,7 @@ class PointNetEncoder(nn.Module):
 
         x = self.resnet_2(x)
 
-        n, k, c = x.size()
+        n, k = x.size()
 
         x = x.permute(0, 1)
 
@@ -67,7 +67,7 @@ class PointNetEncoder(nn.Module):
         x = F.relu(x)
         x = self.resnet_3(x)
 
-        n, k, c = x.size()
+        n, k = x.size()
 
         x = x.permute(0, 1)
 
@@ -77,10 +77,10 @@ class PointNetEncoder(nn.Module):
         x = x.permute(0, 1)
 
         x = self.resnet_4(x)
-        n, k, c = x.size()
+        n, k = x.size()
         x = x.permute(0, 1)
 
-        # print(f"x.shape is {x.shape}")
+        print(f"x.shape is {x.shape}")
         # print(f"k is {k}")
         x = F.max_pool1d(x, k)
 
