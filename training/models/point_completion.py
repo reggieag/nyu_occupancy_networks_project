@@ -176,7 +176,7 @@ class OccupancyModel(nn.Module):
         x = x['ex']
         # CBN
         gamma = self.gammaLayer(pt_cloud)
-        gamma = torch.stack([gamma for _ in range(K)], dim=2)
+        gamma = torch.stack([gamma for _ in range(k)], dim=2)
         beta = self.betaLayer(pt_cloud)
         beta = torch.stack([beta for _ in range(k)], dim=2)
         x =gamma.mul(self.cbn(x)).add_(beta)
