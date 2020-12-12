@@ -97,10 +97,10 @@ class Block(nn.Module):
         self.fc2 = nn.Conv2d(256, 256, kernel_size=1)
         self.bn1 = nn.BatchNorm2d(256, affine=False, track_running_stats=True)
         self.bn2 = nn.BatchNorm2d(256, affine=False, track_running_stats=True)
-        self.gammaLayer1 = nn.Conv1d(256, 256, kernel_size=1)
-        self.gammaLayer2 = nn.Conv1d(256, 256, kernel_size=1)
-        self.betaLayer1 = nn.Conv1d(256, 256, kernel_size=1)
-        self.betaLayer2 = nn.Conv1d(256, 256, kernel_size=1)
+        self.gammaLayer1 = nn.Conv1d(512, 256, kernel_size=1)
+        self.gammaLayer2 = nn.Conv1d(512, 256, kernel_size=1)
+        self.betaLayer1 = nn.Conv1d(512, 256, kernel_size=1)
+        self.betaLayer2 = nn.Conv1d(512, 256, kernel_size=1)
 
     def forward(self, y):
         x = y['ex']
@@ -168,7 +168,7 @@ class OccupancyModel(nn.Module):
         # pts = self.fc_enc(x)
         # print("View effect is:")
         print(pt_cloud.shape)
-        pt_cloud = pt_cloud.view(3, 512, 1) # Add's another dimension? dunno why
+        # pt_cloud = pt_cloud.view(3, 512, 1) # Add's another dimension? dunno why
         # print(pt_cloud.shape)
         x = self.fc1(x)
         # 5 pre-activation ResNet-blocks
