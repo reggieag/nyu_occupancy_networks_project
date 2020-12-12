@@ -34,19 +34,19 @@ class PointNetEncoder(nn.Module):
 
     def forward(self, x):
         x = x.squeeze()
-        x = x.permute(0, 2, 1)
+        x = x.permute(0, 1)
 
         x = F.relu(self.fc1(x))
 
         x = self.resnet_1(x)
 
         n, k, c = x.size()
-        x = x.permute(0, 2, 1)
+        x = x.permute(0, 1)
 
         pooled = F.max_pool1d(x, k).expand(x.size())
         x = torch.cat([x, pooled], dim=1)
 
-        x = x.permute(0, 2, 1)
+        x = x.permute(0, 1)
 
         x = F.relu(x)
 
@@ -54,28 +54,28 @@ class PointNetEncoder(nn.Module):
 
         n, k, c = x.size()
 
-        x = x.permute(0, 2, 1)
+        x = x.permute(0, 1)
 
         pooled = F.max_pool1d(x, k).expand(x.size())
         x = torch.cat([x, pooled], dim=1)
 
-        x = x.permute(0, 2, 1)
+        x = x.permute(0, 1)
 
         x = F.relu(x)
         x = self.resnet_3(x)
 
         n, k, c = x.size()
 
-        x = x.permute(0, 2, 1)
+        x = x.permute(0, 1)
 
         pooled = F.max_pool1d(x, k).expand(x.size())
         x = torch.cat([x, pooled], dim=1)
 
-        x = x.permute(0, 2, 1)
+        x = x.permute(0, 1)
 
         x = self.resnet_4(x)
         n, k, c = x.size()
-        x = x.permute(0, 2, 1)
+        x = x.permute(0, 1)
 
         # print(f"x.shape is {x.shape}")
         # print(f"k is {k}")
