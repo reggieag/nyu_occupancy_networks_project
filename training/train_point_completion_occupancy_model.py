@@ -49,13 +49,14 @@ def train(epoch, model, trainloader, optimizer):
         # print(f"pred.shape after permute {pred.shape}")
 
         loss = modelCriterion(pred, occupancies)
+        loss.backward()
         optimizer.step()
         if batch_idx % 10 == 0:
-            print('Train Epoch: {} [{}/{} ({:.0f}%)]\\tLoss: {:.6f}'.format(
+            print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader), 100. * batch_idx / len(train_loader),
                 loss.item()))
         if batch_idx % 100 == 0:
-            print("Saving to {MODEL_FILENAME}")
+            print(f"Saving to {MODEL_FILENAME}")
             torch.save(model.state_dict(), MODEL_FILENAME)
 
 
