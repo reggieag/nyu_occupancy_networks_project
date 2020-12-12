@@ -64,6 +64,7 @@ if __name__ == "__main__":
     val_loader = generate_data_loader(shapenet_class_dir, 'val.lst')
 
     model = OccupancyModel()
+    model.cuda()
     model.load_state_dict(torch.load(MODEL_FILENAME, map_location=DEVICE))
 
     validation(model, val_loader)
