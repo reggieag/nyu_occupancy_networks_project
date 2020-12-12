@@ -93,10 +93,10 @@ class PointNetEncoder(nn.Module):
 class Block(nn.Module):
     def __init__(self):
         super(Block, self).__init__()
-        self.fc1 = nn.Conv2d(256, 256, kernel_size=1)
-        self.fc2 = nn.Conv2d(256, 256, kernel_size=1)
-        self.bn1 = nn.BatchNorm2d(256, affine=False, track_running_stats=True)
-        self.bn2 = nn.BatchNorm2d(256, affine=False, track_running_stats=True)
+        self.fc1 = nn.Conv2d(256, 512, kernel_size=1)
+        self.fc2 = nn.Conv2d(256, 512, kernel_size=1)
+        self.bn1 = nn.BatchNorm2d(512, affine=False, track_running_stats=True)
+        self.bn2 = nn.BatchNorm2d(512, affine=False, track_running_stats=True)
         self.gammaLayer1 = nn.Conv1d(64, 512, kernel_size=1)
         self.gammaLayer2 = nn.Conv1d(64, 512, kernel_size=1)
         self.betaLayer1 = nn.Conv1d(64, 512, kernel_size=1)
@@ -108,7 +108,7 @@ class Block(nn.Module):
         # n, c, k = x.size()
 
         encoding = y['enc']
-        encoding.permute(1, 0)
+        # encoding.permute(1, 0)
         gamma = self.gammaLayer1(encoding)
 
         # Need to stack the beta and gamma
