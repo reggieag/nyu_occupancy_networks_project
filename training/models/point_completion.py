@@ -161,6 +161,7 @@ class OccupancyModel(nn.Module):
         return nn.Sequential(*blocks)
 
     def forward(self, x, pointcloud):
+        n, c, k, d = x.size()
         print(f"x.shape  at beginning of forward is {x.shape}")
         print(f"pointcloud.shape  at beginning of forward is {pointcloud.shape}")
         pt_cloud = self.encoderModel(pointcloud)
@@ -175,8 +176,10 @@ class OccupancyModel(nn.Module):
         x = x['ex']
         # CBN
         gamma = self.gammaLayer(pt_cloud)
+        gamma = torch.stack([gamma for _ in range(K)], dim=2)
         beta = self.betaLayer(pt_cloud)
-        x = gamma * self.cbn(x) + beta
+        beta = torch.stack([beta for _ in range(k)], dim=2)
+        x =gamma.mul(self.cbn(x)).add_(beta)
         x = F.relu(x)
         x = self.fc2(x)
         x = x.view(-1, 1)
