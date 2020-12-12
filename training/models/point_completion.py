@@ -45,7 +45,9 @@ class PointNetEncoder(nn.Module):
         print(x.size())
         n, k = x.size()
         x = x.permute(0, 1)
-
+        print(n, k)
+        print(x.shape)
+        print(x.size())
         pooled = F.max_pool1d(x, k).expand(x.size())
         x = torch.cat([x, pooled], dim=1)
 
