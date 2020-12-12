@@ -167,7 +167,7 @@ class OccupancyModel(nn.Module):
         pt_cloud = self.encoderModel(pointcloud)
         # pts = self.fc_enc(x)
         # print("View effect is:")
-        # print(pt_cloud.shape)
+        print(pt_cloud.shape)
         pt_cloud = pt_cloud.view(3, 512, 1) # Add's another dimension? dunno why
         # print(pt_cloud.shape)
         x = self.fc1(x)
