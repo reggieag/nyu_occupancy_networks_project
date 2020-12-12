@@ -97,10 +97,10 @@ class Block(nn.Module):
         self.fc2 = nn.Conv2d(256, 256, kernel_size=1)
         self.bn1 = nn.BatchNorm2d(256, affine=False, track_running_stats=True)
         self.bn2 = nn.BatchNorm2d(256, affine=False, track_running_stats=True)
-        self.gammaLayer1 = nn.Conv1d(512, 256, kernel_size=1)
-        self.gammaLayer2 = nn.Conv1d(512, 256, kernel_size=1)
-        self.betaLayer1 = nn.Conv1d(512, 256, kernel_size=1)
-        self.betaLayer2 = nn.Conv1d(512, 256, kernel_size=1)
+        self.gammaLayer1 = nn.Conv1d(256, 256, kernel_size=1)
+        self.gammaLayer2 = nn.Conv1d(256, 256, kernel_size=1)
+        self.betaLayer1 = nn.Conv1d(256, 256, kernel_size=1)
+        self.betaLayer2 = nn.Conv1d(256, 256, kernel_size=1)
 
     def forward(self, y):
         x = y['ex']
@@ -167,8 +167,8 @@ class OccupancyModel(nn.Module):
         pt_cloud = self.encoderModel(pointcloud)
         # pts = self.fc_enc(x)
         # print("View effect is:")
-        print(pt_cloud.shape)
-        # pt_cloud = pt_cloud.view(3, 512, 1) # Add's another dimension? dunno why
+        # print(pt_cloud.shape)
+        pt_cloud = pt_cloud.view(-1, 256, 1) # Add's another dimension? dunno why
         # print(pt_cloud.shape)
         x = self.fc1(x)
         # 5 pre-activation ResNet-blocks
@@ -179,10 +179,10 @@ class OccupancyModel(nn.Module):
         gamma = torch.stack([gamma for _ in range(k)], dim=2)
         beta = self.betaLayer(pt_cloud)
         beta = torch.stack([beta for _ in range(k)], dim=2)
-        x = gamma.mul(self.cbn(x)).add_(beta)
+        x =gamma.mul(self.cbn(x)).add_(beta)
         x = F.relu(x)
         x = self.fc2(x)
-        # x = x.view(-1, 1)
-        # x = torch.sigmoid(x)
+        x = x.view(-1, 1)
+        x = torch.sigmoid(x)
         # print(f"x.shape at end of forward is {x.shape}")
         return x
