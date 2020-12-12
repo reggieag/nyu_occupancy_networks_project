@@ -184,5 +184,5 @@ class OccupancyModel(nn.Module):
         x = self.fc2(x)
         # x = x.view(-1, 1)
         # x = torch.sigmoid(x)
-        print(f"x.shape at end of forward is {x.shape}")
+        # print(f"x.shape at end of forward is {x.shape}")
         return x
