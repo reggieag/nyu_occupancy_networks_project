@@ -34,7 +34,9 @@ class PointNetEncoder(nn.Module):
 
     def forward(self, x):
         x = x.squeeze()
+        print(x.shape)
         x = x.permute(0, 2, 1)
+        print(x.shape)
 
         x = F.relu(self.fc1(x))
 
