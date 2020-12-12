@@ -102,7 +102,8 @@ class Block(nn.Module):
 
     def forward(self, y):
         x = y['ex']
-        n, c, k, d = x.size()
+        # n, c, k, d = x.size()
+        n, c, k = x.size()
 
         encoding = y['enc']
         gamma = self.gammaLayer1(encoding)
