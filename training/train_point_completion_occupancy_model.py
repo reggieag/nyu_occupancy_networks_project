@@ -20,8 +20,8 @@ MODEL_FILENAME = 'point_completion_model.pth'
 
 
 def train(epoch, model, trainloader, optimizer):
-    # decoderLoss = nn.BCEWithLogitsLoss(reduction='sum')  # Dunno if i need this loss or what
-    modelCriterion = nn.BCELoss()
+    decoderLoss = nn.BCEWithLogitsLoss(reduction='sum')  # Dunno if i need this loss or what
+    # modelCriterion = nn.BCELoss()
     model.train()
 
     for batch_idx, data in enumerate(train_loader):
@@ -48,7 +48,7 @@ def train(epoch, model, trainloader, optimizer):
         pred = pred.permute(0,2,1,3).squeeze(-1)
         print(f"pred.shape after permute {pred.shape}")
 
-        loss = modelCriterion(pred, occupancies)
+        loss = decoderLoss(pred, occupancies)
         loss.backward()
         optimizer.step()
         if batch_idx % 10 == 0:
