@@ -97,10 +97,10 @@ class Block(nn.Module):
         self.fc2 = nn.Conv2d(256, 512, kernel_size=1)
         self.bn1 = nn.BatchNorm2d(512, affine=False, track_running_stats=True)
         self.bn2 = nn.BatchNorm2d(512, affine=False, track_running_stats=True)
-        self.gammaLayer1 = nn.Conv1d(64, 512, kernel_size=1)
-        self.gammaLayer2 = nn.Conv1d(64, 512, kernel_size=1)
-        self.betaLayer1 = nn.Conv1d(64, 512, kernel_size=1)
-        self.betaLayer2 = nn.Conv1d(64, 512, kernel_size=1)
+        self.gammaLayer1 = nn.Conv1d(512, 64, kernel_size=1)
+        self.gammaLayer2 = nn.Conv1d(512, 64, kernel_size=1)
+        self.betaLayer1 = nn.Conv1d(512, 64, kernel_size=1)
+        self.betaLayer2 = nn.Conv1d(512, 64, kernel_size=1)
 
     def forward(self, y):
         x = y['ex']
