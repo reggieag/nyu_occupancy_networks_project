@@ -30,7 +30,7 @@ class PointNetEncoder(nn.Module):
         self.resnet_2 = ResnetBlock(512, 256)
         self.resnet_3 = ResnetBlock(512, 256)
         self.resnet_4 = ResnetBlock(512, 256)
-        self.fc_final = nn.Linear(256, 128)
+        self.fc_final = nn.Linear(256, 256)
 
     def forward(self, x):
         x = x.squeeze()
@@ -168,7 +168,7 @@ class OccupancyModel(nn.Module):
         # pts = self.fc_enc(x)
         # print("View effect is:")
         print(pt_cloud.shape)
-        pt_cloud = pt_cloud.view(-1, 128, 1) # Add's another dimension? dunno why
+        pt_cloud = pt_cloud.view(-1, 256, 1) # Add's another dimension? dunno why
         print(pt_cloud.shape)
         x = self.fc1(x)
         # 5 pre-activation ResNet-blocks
