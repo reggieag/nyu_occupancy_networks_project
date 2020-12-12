@@ -34,8 +34,9 @@ def train(epoch, model, trainloader, optimizer):
         # pts = pts.view(BATCH_SIZE * K, 3, 1).cuda()
         # occupancies = occupancies.view(BATCH_SIZE * K, 1).cuda()
         # not sure what i should be doing here
+        print(pointcloud.shape)
         pointcloud = pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
-        # print(pointcloud.shape)
+        print(pointcloud.shape)
         pts = pts.view(-1, K, 3, 1).permute(0, 2, 1, 3).cuda()
         occupancies = occupancies.view(-1,K, 1).cuda()
 
