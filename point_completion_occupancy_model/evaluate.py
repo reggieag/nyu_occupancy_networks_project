@@ -6,7 +6,7 @@ import numpy
 
 from models.point_completion import OccupancyModel
 from train import MODEL_FILENAME, SHAPENET_CLASS_DIR
-from utils.constants import DEVICE
+from utils.constants import DEVICE, POINTCLOUD_N
 from utils.data_loader import generate_data_loader
 
 
@@ -106,6 +106,7 @@ if __name__ == "__main__":
         # print(f"evaluating {data.dir}")
 
         pts, occupancies, pointcloud = data
+        pointcloud = pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
 
         f = partial(over_model_threshold, model, pointcloud)
 
