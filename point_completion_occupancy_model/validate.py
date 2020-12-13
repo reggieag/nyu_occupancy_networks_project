@@ -48,10 +48,10 @@ def validation(model, val_loader):
         validation_loss /= len(val_loader.dataset)
 
         if actual_occupied > 0:
-            print(pts)
-            print(pts.shape)
-            print(occupancies)
-            print(pred)
+            # print(pts)
+            # print(pts.shape)
+            # print(occupancies)
+            # print(pred)
             print('Validation set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
                 validation_loss, correctNow, pts.size()[0] * K, 100. * correctNow / (pts.size()[0] * K)))
 
