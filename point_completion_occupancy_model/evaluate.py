@@ -100,7 +100,7 @@ if __name__ == "__main__":
     test_loader = generate_data_loader(SHAPENET_CLASS_DIR, 'test.lst')
 
     for batch_idx, data in enumerate(test_loader):
-        print(f"evaluating {data.dir}")
+        # print(f"evaluating {data.dir}")
 
         pts, occupancies, pointcloud = data
 
