@@ -45,6 +45,7 @@ def train(epoch, model, train_loader, optimizer):
         # print(f"pred.shape after permute {pred.shape}")
 
         loss = modelCriterion(pred, occupancies)
+        loss = loss/K/BATCH_SIZE
         loss.backward()
         optimizer.step()
         if batch_idx % 10 == 0:
