@@ -124,9 +124,9 @@ if __name__ == "__main__":
         sample_pointcloud = sample_pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
 
         with open('original_point_cloud.xyz', 'w') as fh:
-            fh.write(f"{org_pointcloud[0].shape[0]}")
+            fh.write(f"{org_pointcloud[0].shape[0]}\n")
             for points in org_pointcloud[0]:
-                fh.write(f"{points[0].item()} {points[1].item()} {points[2].item()}")
+                fh.write(f"{points[0].item()} {points[1].item()} {points[2].item()}\n")
         # f = partial(over_model_threshold, model, sample_pointcloud)
         #
         # g = generate_adaptive_grid(32, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 3, f, True)
