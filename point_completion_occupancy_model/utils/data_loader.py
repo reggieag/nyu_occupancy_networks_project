@@ -15,7 +15,10 @@ class DataSetClass(torch.utils.data.Dataset):
                                             dtype=torch.float)
 
         with numpy.load(f"{d}/pointcloud.npz") as ptcloud_data:
+            print('loading point cloud')
             self.point_cloud = torch.tensor(ptcloud_data['points'], dtype=torch.float)
+            print(self.point_cloud)
+            print(self.point_cloud.shape)
         self.K = K
         self.length = int(self.occupancies.size()[0] / self.K)
         self.point_cloud = None
@@ -24,7 +27,7 @@ class DataSetClass(torch.utils.data.Dataset):
         return self.length
 
     def __getitem__(self, idx):
-        print(f"getting dir {self.dir}")
+        # print(f"getting dir {self.dir}")
         # pick POINTCLOUD_N random points for the pointcloud
         point_cloud_indicies = numpy.random.randint(self.point_cloud.shape[0], size=POINTCLOUD_N)
         point_cloud_sample = self.point_cloud[point_cloud_indicies, :]
