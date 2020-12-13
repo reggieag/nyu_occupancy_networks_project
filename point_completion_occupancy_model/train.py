@@ -66,7 +66,7 @@ if __name__ == "__main__":
 
     model = OccupancyModel()
     model.cuda()
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    optimizer = optim.Adam(model.parameters(), lr=0.0001)
 
     for epoch in range(1):
         train(epoch, model, train_loader, optimizer)
