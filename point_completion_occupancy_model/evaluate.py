@@ -116,7 +116,7 @@ if __name__ == "__main__":
         print(pts.shape)
         print(occupancies.shape)
         pointcloud = pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
-        numpy.savetxt('incomplete_pointcloud.txt', pointcloud.detach().numpy())
+        numpy.savetxt('incomplete_pointcloud.txt', pointcloud.detach().numpy().cpu())
 
         f = partial(over_model_threshold, model, pointcloud)
 
