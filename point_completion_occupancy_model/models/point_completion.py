@@ -179,7 +179,7 @@ class OccupancyModel(nn.Module):
         gamma = torch.stack([gamma for _ in range(k)], dim=2)
         beta = self.betaLayer(pt_cloud)
         beta = torch.stack([beta for _ in range(k)], dim=2)
-        x =gamma.mul(self.cbn(x)).add_(beta)
+        x = gamma.mul(self.cbn(x)).add_(beta)
         x = F.relu(x)
         x = self.fc2(x)
         x = x.view(-1, 1)

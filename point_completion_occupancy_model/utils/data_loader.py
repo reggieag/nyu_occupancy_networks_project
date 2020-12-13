@@ -1,13 +1,15 @@
-from utils.constants import K, BATCH_SIZE, POINTCLOUD_N
-import torch
-import numpy
 import os
 
+import numpy
+import torch
+
+from .constants import K, BATCH_SIZE, POINTCLOUD_N
 
 # One DataSetClass per subdirectory in a category, will return "K" point samples and a pointcloud with POINTCLOUD_N points
 class DataSetClass(torch.utils.data.Dataset):
     def __init__(self, d):
         self.dir = d
+        print(f"loading {d}/points.npz")
         with numpy.load(f"{d}/points.npz") as data:
             self.pts = torch.tensor(data["points"], dtype=torch.float)
             self.occupancies = torch.tensor(numpy.unpackbits(data["occupancies"])[:self.pts.size()[0]],
