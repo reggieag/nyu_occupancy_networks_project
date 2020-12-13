@@ -95,12 +95,16 @@ def over_model_threshold(model, sample_pointcloud, pt):
     # print(pt.shape)
     # print(pt.view(-1, 1, 3, 1).shape)
     # print(pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3).shape)
-    x = model(pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3), sample_pointcloud)
+    sample_pointcloud = sample_pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
+    pt = pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3)
+    x = model(pt, sample_pointcloud)
     # print(x)
     # print(x.shape)
     # print(x[0])
     # print(x[0]>.001)
     x = torch.sigmoid(x)
+    print(x)
+    print(x.shape)
     # print(x[0].item())
     return (x[0] > 0.6).item()
 
@@ -125,7 +129,6 @@ if __name__ == "__main__":
         # break
         # print(f"evaluating {data.dir}")
 
-        pts, occupancies, sample_pointcloud, org_pointcloud = data
         # print(sample_pointcloud.shape)
         # print(pts.shape)
         # print(occupancies.shape)
