@@ -123,7 +123,8 @@ if __name__ == "__main__":
         f = partial(over_model_threshold, model, pointcloud)
 
         g = generate_adaptive_grid(32, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 3, f, True)
-        # numpy.savetxt('electronic_ag_32_3.txt', g.detach().numpy())
+
+        numpy.savetxt('electronic_ag_32_3.txt', g.detach().numpy())
         # numpy.savetxt('incomplete_pointcloud.txt', pointcloud.detach().numpy())
 
         break
