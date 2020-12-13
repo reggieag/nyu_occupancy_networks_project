@@ -163,12 +163,12 @@ class OccupancyModel(nn.Module):
     def forward(self, x, pointcloud):
         n, c, k, d = x.size()
         # print(f"x.shape  at beginning of forward is {x.shape}")
-        # print(f"pointcloud.shape  at beginning of forward is {pointcloud.shape}")
+        print(f"pointcloud.shape  at beginning of forward is {pointcloud.shape}")
         pt_cloud = self.encoderModel(pointcloud)
         # pts = self.fc_enc(x)
         # print("View effect is:")
         # print(pt_cloud.shape)
-        pt_cloud = pt_cloud.view(-1, 256, 1) # Add's another dimension? dunno why
+        pt_cloud = pt_cloud.view(-1, 256, 1)  # Add's another dimension? dunno why
         # print(pt_cloud.shape)
         x = self.fc1(x)
         # 5 pre-activation ResNet-blocks
