@@ -3,10 +3,10 @@ from functools import partial
 import torch
 import numpy
 
-from .models.point_completion import OccupancyModel
-from .train import MODEL_FILENAME, SHAPENET_CLASS_DIR
-from .utils.constants import DEVICE
-from .utils.data_loader import generate_data_loader
+from models.point_completion import OccupancyModel
+from train import MODEL_FILENAME, SHAPENET_CLASS_DIR
+from utils.constants import DEVICE
+from utils.data_loader import generate_data_loader
 
 
 def generate_grid(ncuts, xl, xr, yl, yr, zl, zr):

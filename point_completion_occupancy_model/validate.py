@@ -1,12 +1,10 @@
-import os
-
 import torch
 import torch.nn as nn
 
-from .utils.data_loader import DataSetClass, load_list_dirs, generate_data_loader
-from .utils.constants import K, BATCH_SIZE, DEVICE, POINTCLOUD_N
-from .models.point_completion import OccupancyModel
-from .train import SHAPENET_CLASS_DIR, MODEL_FILENAME, DEVICE
+from utils.data_loader import DataSetClass, load_list_dirs, generate_data_loader
+from utils.constants import K, BATCH_SIZE, DEVICE, POINTCLOUD_N
+from models.point_completion import OccupancyModel
+from train import SHAPENET_CLASS_DIR, MODEL_FILENAME, DEVICE
 
 
 def validation(model, val_loader):
