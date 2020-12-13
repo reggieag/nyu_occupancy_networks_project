@@ -1,4 +1,4 @@
-K = 1
+K = 64
 BATCH_SIZE = 64
 POINTCLOUD_N = 300
 DEVICE = 'cuda'

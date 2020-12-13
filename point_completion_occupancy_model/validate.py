@@ -19,7 +19,7 @@ def validation(model, val_loader):
 
         pointcloud = pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
         pts = pts.view(-1, K, 3, 1).permute(0, 2, 1, 3).cuda()
-        occupancies = occupancies.view(1*K).cuda()
+        occupancies = occupancies.view(BATCH_SIZE*K).cuda()
 
         pred = model(pts, pointcloud)
 
@@ -61,7 +61,7 @@ def validation(model, val_loader):
 if __name__ == "__main__":
     # catalogue all of the directories with the chosen category
     print(f"loading val.lst for dir {SHAPENET_CLASS_DIR}")
-    val_loader = generate_data_loader(SHAPENET_CLASS_DIR, 'val.lst', batch_size=1)
+    val_loader = generate_data_loader(SHAPENET_CLASS_DIR, 'val.lst', batch_size=BATCH_SIZE)
 
     model = OccupancyModel()
     model.cuda()
