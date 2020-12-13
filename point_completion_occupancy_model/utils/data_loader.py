@@ -9,7 +9,6 @@ from .constants import K, BATCH_SIZE, POINTCLOUD_N
 class DataSetClass(torch.utils.data.Dataset):
     def __init__(self, d):
         self.dir = d
-        print(f"loading {d}/points.npz")
         with numpy.load(f"{d}/points.npz") as data:
             self.pts = torch.tensor(data["points"], dtype=torch.float)
             self.occupancies = torch.tensor(numpy.unpackbits(data["occupancies"])[:self.pts.size()[0]],
@@ -36,8 +35,8 @@ def load_list_dirs(top_dir, list_file):
         return [os.path.join(top_dir, train_dir) for train_dir in train_list.readlines()]
 
 
-def generate_data_loader(top_dir, list_file):
+def generate_data_loader(top_dir, list_file, batch_size=BATCH_SIZE):
     image_dirs = load_list_dirs(top_dir, list_file)
     datasets = [DataSetClass(image_dir.rstrip()) for image_dir in image_dirs]
     data = torch.utils.data.ConcatDataset(datasets)
-    return torch.utils.data.DataLoader(data, batch_size=BATCH_SIZE, shuffle=True)
+    return torch.utils.data.DataLoader(data, batch_size=batch_size, shuffle=True)

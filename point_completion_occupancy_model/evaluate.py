@@ -1,4 +1,5 @@
 from functools import partial
+from random import random
 
 import torch
 import numpy
@@ -98,7 +99,10 @@ if __name__ == "__main__":
 
     test_loader = generate_data_loader(SHAPENET_CLASS_DIR, 'test.lst')
 
-    batch_idx, data = enumerate(next(test_loader))
+    random_idx = random(0, len(test_loader))
+    data = test_loader[random_idx]
+
+    print(f"evaluating {data.dir}")
 
     pts, occupancies, pointcloud = data
 
