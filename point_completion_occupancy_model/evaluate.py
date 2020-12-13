@@ -124,7 +124,7 @@ if __name__ == "__main__":
         sample_pointcloud = sample_pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
 
         with open('original_point_cloud.xyz', 'w') as fh:
-            fh.write(org_pointcloud[0].shape[0])
+            fh.write(f"{org_pointcloud[0].shape[0]}")
             for points in org_pointcloud[0]:
                 fh.write(f"{points[0].item()} {points[1].item()} {points[2].item()}")
         # f = partial(over_model_threshold, model, sample_pointcloud)
