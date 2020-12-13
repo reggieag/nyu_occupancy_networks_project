@@ -116,12 +116,11 @@ if __name__ == "__main__":
         print(pts.shape)
         print(occupancies.shape)
         pointcloud = pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
-        numpy.savetxt('incomplete_pointcloud.txt', pointcloud.detach().cpu().numpy())
 
         f = partial(over_model_threshold, model, pointcloud)
 
         g = generate_adaptive_grid(32, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 3, f, True)
-        numpy.savetxt('electronic_ag_32_3.txt', g.detach().numpy())
+        # numpy.savetxt('electronic_ag_32_3.txt', g.detach().numpy())
         # numpy.savetxt('incomplete_pointcloud.txt', pointcloud.detach().numpy())
 
         break
