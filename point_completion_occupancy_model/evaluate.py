@@ -101,7 +101,7 @@ def over_model_threshold(model, sample_pointcloud, pt):
     # print(x[0]>.001)
     x = torch.sigmoid(x)
     print(x[0].item())
-    return (x[0] > 0.2).item()
+    return (x[0] > 0.6).item()
 
 
 def write_point_cloud_to_xyz(pointcloud, filename):
