@@ -25,6 +25,8 @@ def validation(model, val_loader):
 
         pred = pred.squeeze(-1)
         pred = torch.sigmoid(pred)
+        print(pred.shape)
+        print(occupancies.shape)
         print(pred)
         print(occupancies)
         loss = modelCriterion(pred, occupancies)
