@@ -3,23 +3,10 @@ import os
 import torch
 import torch.nn as nn
 
-from utils.data_loader import DataSetClass, load_list_dirs, generate_data_loader
-from utils.constants import K, BATCH_SIZE, DEVICE, POINTCLOUD_N
-from models.point_completion import OccupancyModel
-
-
-SHAPENET_DIR = "/scratch/rag551/occupancy_networks/ShapeNet"
-
-# SHAPNET_CLASSES = [
-#     '02958343'
-# ]
-
-SHAPENET_CLASS = '04401088'  # electronics
-
-MODEL_FILENAME = 'point_completion_model.pth'
-
-
-DEVICE = 'cuda'
+from .utils.data_loader import DataSetClass, load_list_dirs, generate_data_loader
+from .utils.constants import K, BATCH_SIZE, DEVICE, POINTCLOUD_N
+from .models.point_completion import OccupancyModel
+from .train import SHAPENET_CLASS_DIR, MODEL_FILENAME, DEVICE
 
 
 def validation(model, val_loader):
@@ -57,11 +44,9 @@ def validation(model, val_loader):
 
 
 if __name__ == "__main__":
-    shapenet_class_dir = os.path.join(SHAPENET_DIR, SHAPENET_CLASS)
-
     # catalogue all of the directories with the chosen category
-    print(f"loading val.lst for dir {shapenet_class_dir}")
-    val_loader = generate_data_loader(shapenet_class_dir, 'val.lst')
+    print(f"loading val.lst for dir {SHAPENET_CLASS_DIR}")
+    val_loader = generate_data_loader(SHAPENET_CLASS_DIR, 'val.lst')
 
     model = OccupancyModel()
     model.cuda()

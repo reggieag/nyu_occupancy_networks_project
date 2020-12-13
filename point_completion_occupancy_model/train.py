@@ -4,9 +4,9 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from utils.data_loader import DataSetClass, load_list_dirs, generate_data_loader
-from utils.constants import K, BATCH_SIZE, DEVICE, POINTCLOUD_N
-from models.point_completion import OccupancyModel
+from .utils.data_loader import DataSetClass, load_list_dirs, generate_data_loader
+from .utils.constants import K, BATCH_SIZE, DEVICE, POINTCLOUD_N
+from .models.point_completion import OccupancyModel
 
 SHAPENET_DIR = "/scratch/rag551/occupancy_networks/ShapeNet"
 
@@ -15,6 +15,8 @@ SHAPENET_DIR = "/scratch/rag551/occupancy_networks/ShapeNet"
 # ]
 
 SHAPENET_CLASS = '04401088'  # electronics
+
+SHAPENET_CLASS_DIR = os.path.join(SHAPENET_DIR, SHAPENET_CLASS)
 
 MODEL_FILENAME = 'point_completion_model.pth'
 
