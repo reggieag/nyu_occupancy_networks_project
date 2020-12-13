@@ -25,12 +25,12 @@ def validation(model, val_loader):
 
         pred = pred.squeeze(-1)
         pred = torch.sigmoid(pred)
-        print(pred.shape)
-        print(occupancies.shape)
-        print(pred)
-        print(occupancies)
+        # print(pred.shape)
+        # print(occupancies.shape)
+        # print(pred)
+        # print(occupancies)
         loss = modelCriterion(pred, occupancies)
-        print(loss)
+        # print(loss)
         validation_loss += loss.item()
 
         threshold = 0.6
@@ -39,6 +39,8 @@ def validation(model, val_loader):
         correctNow = roundedOut.eq(occupancies.view(-1)).sum()
         print("rounded out is")
         print(roundedOut)
+        print(roundedOut.eq(occupancies.view(-1)))
+        print('occupancies.view(-1)')
         print(occupancies.view(-1))
         print(correctNow)
         print(max(occupancies))
