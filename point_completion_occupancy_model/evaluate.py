@@ -93,7 +93,7 @@ def over_model_threshold(model, point_cloud, pt):
     x = model(pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3), point_cloud)
     print(x)
     print(x.shape)
-    return (x > 0.2).item()
+    return (x[0] > 0.2).item()
 
 
 if __name__ == "__main__":
@@ -102,7 +102,7 @@ if __name__ == "__main__":
     model.cuda()
     model.eval()
 
-    test_loader = generate_data_loader(SHAPENET_CLASS_DIR, 'test.lst', batch_size=1)
+    test_loader = generate_data_loader(SHAPENET_CLASS_DIR, 'test.lst')
 
     for batch_idx, data in enumerate(test_loader):
         # print(f"evaluating {data.dir}")
