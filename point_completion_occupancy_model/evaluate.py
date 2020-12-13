@@ -6,7 +6,7 @@ import numpy
 
 from models.point_completion import OccupancyModel
 from train import MODEL_FILENAME, SHAPENET_CLASS_DIR
-from utils.constants import DEVICE, POINTCLOUD_N
+from utils.constants import DEVICE, sample_pointcloud_N
 from utils.data_loader import generate_data_loader
 
 
@@ -88,13 +88,13 @@ def generate_adaptive_grid(ncuts, xl, xh, yl, yh, zl, zh, limit, mesh_funct, onC
     return final_grid
 
 
-def over_model_threshold(model, pointcloud, pt):
+def over_model_threshold(model, sample_pointcloud, pt):
     # print(pt.view(-1, 1, 3, 1))
     # print(pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3))
     # print(pt.shape)
     # print(pt.view(-1, 1, 3, 1).shape)
     # print(pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3).shape)
-    x = model(pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3), pointcloud)
+    x = model(pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3), sample_pointcloud)
     # print(x)
     # print(x.shape)
     # print(x[0])
@@ -114,17 +114,17 @@ if __name__ == "__main__":
     for batch_idx, data in enumerate(test_loader):
         # print(f"evaluating {data.dir}")
 
-        pts, occupancies, pointcloud = data
-        print(pointcloud.shape)
+        pts, occupancies, sample_pointcloud, org_pointcloud = data
+        print(sample_pointcloud.shape)
         print(pts.shape)
         print(occupancies.shape)
-        pointcloud = pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
+        sample_pointcloud = sample_pointcloud.view(-1, sample_pointcloud_N, 3, 1).permute(0, 2, 1, 3).cuda()
 
-        f = partial(over_model_threshold, model, pointcloud)
-
-        g = generate_adaptive_grid(32, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 3, f, True)
-
-        numpy.savetxt('electronic_ag_32_3.txt', g.detach().numpy())
-        # numpy.savetxt('incomplete_pointcloud.txt', pointcloud.detach().numpy())
+        # f = partial(over_model_threshold, model, sample_pointcloud)
+        #
+        # g = generate_adaptive_grid(32, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 3, f, True)
+        #
+        # numpy.savetxt('electronic_ag_32_3.txt', g.detach().numpy())
+        # numpy.savetxt('incomplete_sample_pointcloud.txt', sample_pointcloud.detach().numpy())
 
         break
