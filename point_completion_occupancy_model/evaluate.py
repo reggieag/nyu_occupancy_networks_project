@@ -89,13 +89,14 @@ def generate_adaptive_grid(ncuts, xl, xh, yl, yh, zl, zh, limit, mesh_funct, onC
     return final_grid
 
 
-def over_model_threshold(model, sample_pointcloud, pt):
+def over_model_threshold(model, sample_pointcloud, pts):
     # print(pt.view(-1, 1, 3, 1))
     # print(pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3))
     # print(pt.shape)
     # print(pt.view(-1, 1, 3, 1).shape)
     # print(pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3).shape)
-    x = model(pt, sample_pointcloud)
+    pts = pts.view(-1, 1, 3, 1).permute(0, 2, 1, 3)
+    x = model(pts, sample_pointcloud)
     # print(x)
     # print(x.shape)
     # print(x[0])
@@ -141,7 +142,7 @@ if __name__ == "__main__":
         torch.save(sample_pointcloud, 'sample_pointcloud.pt')
 
         sample_pointcloud = sample_pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
-        pts = pts.view(-1, 1, 3, 1).permute(0, 2, 1, 3)
+        # pts = pts.view(-1, 1, 3, 1).permute(0, 2, 1, 3)
 
         f = partial(over_model_threshold, model, sample_pointcloud)
         g = generate_adaptive_grid(32, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 3, f, True)
