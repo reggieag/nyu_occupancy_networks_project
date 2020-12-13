@@ -39,7 +39,7 @@ def validation(model, val_loader):
         correctNow = roundedOut.eq(occupancies.view(-1)).sum()
         print("rounded out is")
         print(roundedOut.eq(1).logical_and(occupancies.view(-1).eq(1)).sum())
-        print(roundedOut.eq(occupancies.view(-1)))
+        print(roundedOut.eq(1).logical_and(occupancies.view(-1).eq(1)))
         print('occupancies.view(-1)')
         print(occupancies.view(-1))
         print(correctNow)
