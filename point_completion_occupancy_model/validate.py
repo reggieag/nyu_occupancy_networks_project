@@ -38,7 +38,7 @@ def validation(model, val_loader):
         roundedOut = torch.tensor(roundedOut).cuda()
         correctNow = roundedOut.eq(occupancies.view(-1)).sum()
         print("rounded out is")
-        print(roundedOut)
+        print(roundedOut.eq(1))
         print(roundedOut.eq(occupancies.view(-1)))
         print('occupancies.view(-1)')
         print(occupancies.view(-1))
