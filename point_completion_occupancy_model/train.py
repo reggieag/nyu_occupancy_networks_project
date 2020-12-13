@@ -26,6 +26,10 @@ def train(epoch, model, train_loader, optimizer):
         print(f"occupancies.shape is {occupancies.shape}")
         print(f"sample_pointcloud.shape is {sample_pointcloud.shape}")
         print(f"org_pointcloud.shape is {org_pointcloud.shape}")
+        # pts.shape is torch.Size([64, 64, 3])
+        # occupancies.shape is torch.Size([64, 64])
+        # sample_pointcloud.shape is torch.Size([64, 300, 3])
+        # org_pointcloud.shape is torch.Size([64, 100000, 3])
         # Each batch size contains batch_size sets of "K" points
         # sample_pointcloud = sample_pointcloud.view(BATCH_SIZE*POINTCLOUD_N, 3, 1).cuda()
         # pts = pts.view(BATCH_SIZE * K, 3, 1).cuda()
@@ -36,8 +40,9 @@ def train(epoch, model, train_loader, optimizer):
         pts = pts.view(-1, K, 3, 1).permute(0, 2, 1, 3).cuda()
         occupancies = occupancies.view(BATCH_SIZE*K).cuda()
 
-        # print(f"pts.shape is {pts.shape}")
-        # print(f"occupancies.shape is {occupancies.shape}")
+        print(f"pts.shape is {pts.shape}")
+        print(f"occupancies.shape is {occupancies.shape}")
+        print(f"sample_pointcloud.shape is {sample_pointcloud.shape}")
         optimizer.zero_grad()
 
         pred = model(pts, sample_pointcloud)
