@@ -63,9 +63,10 @@ def generate_adaptive_grid(ncuts, xl, xh, yl, yh, zl, zh, limit, mesh_funct, onC
             if onCuda:
                 coord = coord.cuda()
             active ^= mesh_funct(coord)
-            print(f"active: {active}, coord: {coord}")
+            # print(f"active: {active}, coord: {coord}")
         if (active):
             print(f"found active {coord}")
+            print(f"active: {active}, coord: {coord}")
             # near left coordinate is v0
             nl = ag[i]
             # top right coordinate is v6
@@ -100,7 +101,7 @@ def over_model_threshold(model, sample_pointcloud, pt):
     # print(x[0])
     # print(x[0]>.001)
     x = torch.sigmoid(x)
-    print(x[0].item())
+    # print(x[0].item())
     return (x[0] > 0.6).item()
 
 
