@@ -95,8 +95,6 @@ def over_model_threshold(model, sample_pointcloud, pt):
     # print(pt.shape)
     # print(pt.view(-1, 1, 3, 1).shape)
     # print(pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3).shape)
-    sample_pointcloud = sample_pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
-    pt = pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3)
     x = model(pt, sample_pointcloud)
     # print(x)
     # print(x.shape)
@@ -139,11 +137,31 @@ if __name__ == "__main__":
         # print(org_pointcloud.shape)
         write_point_cloud_to_xyz(org_pointcloud, 'original_point_cloud_2.xyz')
         write_point_cloud_to_xyz(sample_pointcloud, 'sample_point_cloud_2.xyz')
-        # sample_pointcloud = sample_pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
+
+        numpy.savetxt('electronic_ag_32_3_sample_pointcloud.txt', sample_pointcloud.cpu().detach().numpy())
+
+        sample_pointcloud = sample_pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
+        pts = pts.view(-1, 1, 3, 1).permute(0, 2, 1, 3)
 
         f = partial(over_model_threshold, model, sample_pointcloud)
         g = generate_adaptive_grid(32, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 3, f, True)
 
         numpy.savetxt('electronic_ag_32_3.txt', g.detach().numpy())
 
+        g = torch.tensor(numpy.loadtxt('electronic_ag_32_3.txt'), dtype=torch.float)
+
+        occ = []
+        with torch.no_grad():
+            for p in g:
+                c = p.view(1, 3, 1).cuda()
+                pred = model(c, sample_pointcloud)
+                c.cpu()
+                occ.append(pred.cpu())
+        numpy.savetxt('electronic_ag_preds_32_3.txt', occ)
+
+        pred = torch.tensor(numpy.loadtxt('electronic_ag_preds_32_3.txt'), dtype=torch.float)
+        pts = torch.tensor(numpy.loadtxt('electronic_ag_32_3.txt'), dtype=torch.float)
+        mask = pred > 0.6
+        pointCloud = pts[mask]
+        numpy.savetxt('electronic_32_3_ptcloud.txt', pointCloud.detach().numpy())
         break
