@@ -112,6 +112,8 @@ if __name__ == "__main__":
     test_loader = generate_data_loader(SHAPENET_CLASS_DIR, 'test.lst', batch_size=1)
 
     for batch_idx, data in enumerate(test_loader):
+        pts, occupancies, sample_pointcloud, org_pointcloud = data
+        # break
         # print(f"evaluating {data.dir}")
 
         pts, occupancies, sample_pointcloud, org_pointcloud = data
@@ -121,6 +123,10 @@ if __name__ == "__main__":
         print(org_pointcloud.shape)
         sample_pointcloud = sample_pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
 
+        with open('original_point_cloud.xyz', 'w') as fh:
+            fh.write(org_pointcloud[0].shape[0])
+            for points in org_pointcloud[0]:
+                fh.write(f"{points[0].item()} {points[1].item()} {points[2].item()}")
         # f = partial(over_model_threshold, model, sample_pointcloud)
         #
         # g = generate_adaptive_grid(32, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 3, f, True)
