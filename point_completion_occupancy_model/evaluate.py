@@ -96,7 +96,7 @@ def over_model_threshold(model, pointcloud, pt):
     # print(pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3).shape)
     x = model(pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3), pointcloud)
     # print(x)
-    print(x[0])
+    print(x[0].item())
     return (x[0] > 0.2).item()
 
 
@@ -116,11 +116,12 @@ if __name__ == "__main__":
         print(pts.shape)
         print(occupancies.shape)
         pointcloud = pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
+        numpy.savetxt('incomplete_pointcloud.txt', pointcloud.detach().numpy())
 
         f = partial(over_model_threshold, model, pointcloud)
 
         g = generate_adaptive_grid(32, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 3, f, True)
         numpy.savetxt('electronic_ag_32_3.txt', g.detach().numpy())
-        numpy.savetxt('incomplete_pointcloud.txt', pointcloud.detach().numpy())
+        # numpy.savetxt('incomplete_pointcloud.txt', pointcloud.detach().numpy())
 
         break
