@@ -40,6 +40,8 @@ def validation(model, val_loader):
         print("rounded out is")
         print(roundedOut)
         print(occupancies.view(-1))
+        print(correctNow)
+        print(max(occupancies))
         correct += correctNow
 
         validation_loss /= len(val_loader.dataset)
