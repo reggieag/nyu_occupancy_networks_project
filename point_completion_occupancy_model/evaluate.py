@@ -96,7 +96,7 @@ def over_model_threshold(model, pointcloud, pt):
     # print(pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3).shape)
     x = model(pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3), pointcloud)
     # print(x)
-    # print(x[0])
+    print(x[0])
     return (x[0] > 0.2).item()
 
 
