@@ -163,7 +163,7 @@ class OccupancyModel(nn.Module):
     def forward(self, x, pointcloud):
         n, c, k, d = x.size()
         # print(f"x.shape  at beginning of forward is {x.shape}")
-        print(f"pointcloud.shape  at beginning of forward is {pointcloud.shape}")
+        # print(f"pointcloud.shape  at beginning of forward is {pointcloud.shape}")
         pt_cloud = self.encoderModel(pointcloud)
         # pts = self.fc_enc(x)
         # print("View effect is:")

@@ -63,6 +63,7 @@ def generate_adaptive_grid(ncuts, xl, xh, yl, yh, zl, zh, limit, mesh_funct, onC
             if onCuda:
                 coord = coord.cuda()
             active ^= mesh_funct(coord)
+        print(f"active: {active}, coord: {coord}")
         if (active):
             print(f"found active {coord}")
             # near left coordinate is v0
