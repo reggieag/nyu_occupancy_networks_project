@@ -33,7 +33,7 @@ class PointNetEncoder(nn.Module):
         self.fc_final = nn.Linear(256, 256)
 
     def forward(self, x):
-        x = x.squeeze()
+        x = x.squeeze(dim=3)
         # print(x.shape)
         x = x.permute(0, 2, 1)
         # print(x.shape)
@@ -83,7 +83,7 @@ class PointNetEncoder(nn.Module):
         # print(f"k is {k}")
         x = F.max_pool1d(x, k)
 
-        x = x.squeeze()
+        x = x.squeeze(dim=3)
         # print(f"x.shape is {x.shape}")
         pts = self.fc_final(x)
 
