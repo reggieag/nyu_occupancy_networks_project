@@ -15,7 +15,7 @@ def validation(model, val_loader):
     correct = 0
 
     for batch_idx, data in enumerate(val_loader):
-        pts, occupancies, pointcloud = data
+        pts, occupancies, pointcloud, full_pointcloud = data
 
         pointcloud = pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
         pts = pts.view(-1, K, 3, 1).permute(0, 2, 1, 3).cuda()
