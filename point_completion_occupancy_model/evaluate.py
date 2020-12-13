@@ -118,6 +118,7 @@ if __name__ == "__main__":
         print(sample_pointcloud.shape)
         print(pts.shape)
         print(occupancies.shape)
+        print(org_pointcloud.shape)
         sample_pointcloud = sample_pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
 
         # f = partial(over_model_threshold, model, sample_pointcloud)
