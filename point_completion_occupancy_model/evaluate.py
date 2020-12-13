@@ -103,6 +103,13 @@ def over_model_threshold(model, sample_pointcloud, pt):
     return (x[0] > 0.2).item()
 
 
+def write_point_cloud_to_xyz(pointcloud, filename):
+    with open(filename, 'w') as fh:
+        fh.write(f"{pointcloud[0].shape[0]}\n")
+        for points in pointcloud[0]:
+            fh.write(f"{points[0].item()} {points[1].item()} {points[2].item()}\n")
+
+
 if __name__ == "__main__":
     model = OccupancyModel()
     model.load_state_dict(torch.load(MODEL_FILENAME, map_location=DEVICE))
@@ -117,16 +124,14 @@ if __name__ == "__main__":
         # print(f"evaluating {data.dir}")
 
         pts, occupancies, sample_pointcloud, org_pointcloud = data
-        print(sample_pointcloud.shape)
-        print(pts.shape)
-        print(occupancies.shape)
-        print(org_pointcloud.shape)
+        # print(sample_pointcloud.shape)
+        # print(pts.shape)
+        # print(occupancies.shape)
+        # print(org_pointcloud.shape)
+        write_point_cloud_to_xyz(org_pointcloud, 'original_point_cloud.xyz')
+        write_point_cloud_to_xyz(sample_pointcloud, 'sample_point_cloud.xyz')
         sample_pointcloud = sample_pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
 
-        with open('original_point_cloud.xyz', 'w') as fh:
-            fh.write(f"{org_pointcloud[0].shape[0]}\n")
-            for points in org_pointcloud[0]:
-                fh.write(f"{points[0].item()} {points[1].item()} {points[2].item()}\n")
         # f = partial(over_model_threshold, model, sample_pointcloud)
         #
         # g = generate_adaptive_grid(32, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 3, f, True)
