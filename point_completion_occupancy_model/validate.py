@@ -25,8 +25,10 @@ def validation(model, val_loader):
 
         pred = pred.squeeze(-1)
         pred = torch.sigmoid(pred)
-
+        print(pred)
+        print(occupancies)
         loss = modelCriterion(pred, occupancies)
+        print(loss)
         validation_loss += loss.item()
 
         threshold = 0.6
