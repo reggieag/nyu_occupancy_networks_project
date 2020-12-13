@@ -138,7 +138,7 @@ if __name__ == "__main__":
         write_point_cloud_to_xyz(org_pointcloud, 'original_point_cloud_2.xyz')
         write_point_cloud_to_xyz(sample_pointcloud, 'sample_point_cloud_2.xyz')
 
-        numpy.savetxt('electronic_ag_32_3_sample_pointcloud.txt', sample_pointcloud.cpu().detach().numpy())
+        torch.save(sample_pointcloud, 'sample_pointcloud.pt')
 
         sample_pointcloud = sample_pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
         pts = pts.view(-1, 1, 3, 1).permute(0, 2, 1, 3)
