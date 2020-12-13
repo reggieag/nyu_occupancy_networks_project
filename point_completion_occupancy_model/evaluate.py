@@ -106,7 +106,7 @@ def over_model_threshold(model, sample_pointcloud, pt):
     print(x)
     print(x.shape)
     print(x[0])
-    # print(x[0].item())
+    print((x[0] > 0.6))
     return (x[0] > 0.6).item()
 
 
