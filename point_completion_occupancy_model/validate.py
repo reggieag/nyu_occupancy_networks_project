@@ -34,6 +34,7 @@ def validation(model, val_loader):
         validation_loss += loss.item()
 
         threshold = 0.6
+        print(pred.view(-1))
         roundedOut = [1 if out > threshold else 0 for out in pred.view(-1)]
         roundedOut = torch.tensor(roundedOut).cuda()
         correctNow = roundedOut.eq(occupancies.view(-1)).sum()
