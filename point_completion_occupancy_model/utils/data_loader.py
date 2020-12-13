@@ -15,13 +15,12 @@ class DataSetClass(torch.utils.data.Dataset):
                                             dtype=torch.float)
 
         with numpy.load(f"{d}/pointcloud.npz") as ptcloud_data:
-            print('loading point cloud')
+            # print('loading point cloud')
             self.point_cloud = torch.tensor(ptcloud_data['points'], dtype=torch.float)
-            print(self.point_cloud)
-            print(self.point_cloud.shape)
+            # print(self.point_cloud)
+            # print(self.point_cloud.shape)
         self.K = K
         self.length = int(self.occupancies.size()[0] / self.K)
-        self.point_cloud = None
 
     def __len__(self):
         return self.length
