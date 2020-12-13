@@ -55,7 +55,7 @@ def validation(model, val_loader):
 if __name__ == "__main__":
     # catalogue all of the directories with the chosen category
     print(f"loading val.lst for dir {SHAPENET_CLASS_DIR}")
-    val_loader = generate_data_loader(SHAPENET_CLASS_DIR, 'val.lst')
+    val_loader = generate_data_loader(SHAPENET_CLASS_DIR, 'val.lst', batch_size=1)
 
     model = OccupancyModel()
     model.cuda()
