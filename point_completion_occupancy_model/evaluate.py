@@ -1,12 +1,7 @@
-import argparse
+from functools import partial
+
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from torchvision.models.resnet import resnet18 as _resnet18
-from PIL import Image
-import io
 import numpy
-import random
 
 from .models.point_completion import OccupancyModel
 from .train import MODEL_FILENAME, SHAPENET_CLASS_DIR
@@ -90,6 +85,11 @@ def generate_adaptive_grid(ncuts, xl, xh, yl, yh, zl, zh, limit, mesh_funct, onC
     return final_grid
 
 
+def over_model_threshold(model, point_cloud, pt):
+    x = model(pt.view(1, 3, 1), point_cloud)
+    return (x > 0.2).item()
+
+
 if __name__ == "__main__":
     model = OccupancyModel()
     model.load_state_dict(torch.load(MODEL_FILENAME, map_location=DEVICE))
@@ -98,5 +98,12 @@ if __name__ == "__main__":
 
     test_loader = generate_data_loader(SHAPENET_CLASS_DIR, 'test.lst')
 
-    g = generate_adaptive_grid(32,-0.5,0.5,-0.5,0.5,-0.5,0.5,3, f, True)
-    numpy.savetxt('ag_32_3.txt', g.detach().numpy())
+    batch_idx, data = enumerate(next(test_loader))
+
+    pts, occupancies, pointcloud = data
+
+    f = partial(over_model_threshold, model, pointcloud)
+
+    g = generate_adaptive_grid(32, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 3, f, True)
+    numpy.savetxt('electronic_ag_32_3.txt', g.detach().numpy())
+    numpy.savetxt('incomplete_point_cloud.txt', pointcloud.detach().numpy())
