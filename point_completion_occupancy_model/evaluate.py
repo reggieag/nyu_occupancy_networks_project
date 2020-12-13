@@ -64,6 +64,7 @@ def generate_adaptive_grid(ncuts, xl, xh, yl, yh, zl, zh, limit, mesh_funct, onC
                 coord = coord.cuda()
             active ^= mesh_funct(coord)
         if (active):
+            print(f"found active {coord}")
             # near left coordinate is v0
             nl = ag[i]
             # top right coordinate is v6
@@ -87,11 +88,11 @@ def generate_adaptive_grid(ncuts, xl, xh, yl, yh, zl, zh, limit, mesh_funct, onC
 
 
 def over_model_threshold(model, pointcloud, pt):
-    print(pt.view(-1, 1, 3, 1))
-    print(pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3))
-    print(pt.shape)
-    print(pt.view(-1, 1, 3, 1).shape)
-    print(pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3).shape)
+    # print(pt.view(-1, 1, 3, 1))
+    # print(pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3))
+    # print(pt.shape)
+    # print(pt.view(-1, 1, 3, 1).shape)
+    # print(pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3).shape)
     x = model(pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3), pointcloud)
     # print(x)
     # print(x[0])
