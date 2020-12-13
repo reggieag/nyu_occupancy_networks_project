@@ -87,7 +87,8 @@ def generate_adaptive_grid(ncuts, xl, xh, yl, yh, zl, zh, limit, mesh_funct, onC
 
 
 def over_model_threshold(model, pointcloud, pt):
-    print(pt)
+    print(pt.shape)
+    print(pointcloud.shape)
     print(pt.view(-1, 1, 3, 1))
     print(pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3))
     print(pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3).shape)
