@@ -99,15 +99,15 @@ if __name__ == "__main__":
 
     test_loader = generate_data_loader(SHAPENET_CLASS_DIR, 'test.lst')
 
-    random_idx = randint(0, len(test_loader))
-    data = test_loader[random_idx]
+    for batch_idx, data in enumerate(test_loader):
+        print(f"evaluating {data.dir}")
 
-    print(f"evaluating {data.dir}")
+        pts, occupancies, pointcloud = data
 
-    pts, occupancies, pointcloud = data
+        f = partial(over_model_threshold, model, pointcloud)
 
-    f = partial(over_model_threshold, model, pointcloud)
+        g = generate_adaptive_grid(32, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 3, f, True)
+        numpy.savetxt('electronic_ag_32_3.txt', g.detach().numpy())
+        numpy.savetxt('incomplete_point_cloud.txt', pointcloud.detach().numpy())
 
-    g = generate_adaptive_grid(32, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 3, f, True)
-    numpy.savetxt('electronic_ag_32_3.txt', g.detach().numpy())
-    numpy.savetxt('incomplete_point_cloud.txt', pointcloud.detach().numpy())
+        break
