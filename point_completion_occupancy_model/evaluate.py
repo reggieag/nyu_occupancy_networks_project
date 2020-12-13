@@ -1,5 +1,5 @@
 from functools import partial
-from random import random
+from random import randint
 
 import torch
 import numpy
@@ -99,7 +99,7 @@ if __name__ == "__main__":
 
     test_loader = generate_data_loader(SHAPENET_CLASS_DIR, 'test.lst')
 
-    random_idx = random(0, len(test_loader))
+    random_idx = randint(0, len(test_loader))
     data = test_loader[random_idx]
 
     print(f"evaluating {data.dir}")
