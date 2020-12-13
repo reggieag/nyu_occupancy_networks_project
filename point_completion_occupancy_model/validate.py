@@ -42,6 +42,9 @@ def validation(model, val_loader):
         print(roundedOut.eq(1).logical_and(occupancies.view(-1).eq(1)))
         print('occupancies.view(-1)')
         print(occupancies.view(-1))
+        print('occupancies eq 1')
+        print(occupancies.view(-1).eq(1))
+        print(occupancies.view(-1).eq(1).sum())
         print(correctNow)
         print(max(occupancies))
         correct += correctNow
