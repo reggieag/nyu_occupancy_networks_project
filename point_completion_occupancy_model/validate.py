@@ -37,22 +37,19 @@ def validation(model, val_loader):
         roundedOut = [1 if out > threshold else 0 for out in pred.view(-1)]
         roundedOut = torch.tensor(roundedOut).cuda()
         correctNow = roundedOut.eq(occupancies.view(-1)).sum()
-        print("rounded out is")
-        print(roundedOut.eq(1).logical_and(occupancies.view(-1).eq(1)).sum())
-        print(roundedOut.eq(1).logical_and(occupancies.view(-1).eq(1)))
-        print('occupancies.view(-1)')
-        print(occupancies.view(-1))
-        print('occupancies eq 1')
-        print(occupancies.view(-1).eq(1))
-        print(occupancies.view(-1).eq(1).sum())
-        print(correctNow)
-        print(max(occupancies))
+
+        occupied_correct = roundedOut.eq(1).logical_and(occupancies.view(-1).eq(1)).sum()
+        predicted_occupied = roundedOut.eq(1).sum()
+        actual_occupied = occupancies.view(-1).eq(1).sum()
+
         correct += correctNow
 
         validation_loss /= len(val_loader.dataset)
 
         print('Validation set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
             validation_loss, correctNow, pts.size()[0] * K, 100. * correctNow / (pts.size()[0] * K)))
+
+        print(f'Occupied correct: {occupied_correct}, actual occupied: {actual_occupied}, predicted_occupied: {predicted_occupied}')
 
 
 if __name__ == "__main__":
