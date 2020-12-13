@@ -12,7 +12,7 @@ SHAPENET_DIR = "/scratch/rag551/occupancy_networks/ShapeNet"
 SHAPENET_CLASS = '04401088'  # electronics
 SHAPENET_CLASS_DIR = os.path.join(SHAPENET_DIR, SHAPENET_CLASS)
 
-MODEL_FILENAME = 'point_completion_model.pth'
+MODEL_FILENAME = 'point_completion_model_2.pth'
 
 
 def train(epoch, model, train_loader, optimizer):
@@ -21,7 +21,7 @@ def train(epoch, model, train_loader, optimizer):
     model.train()
 
     for batch_idx, data in enumerate(train_loader):
-        pts, occupancies, pointcloud = data
+        pts, occupancies, pointcloud, org_pointcloud = data
         # print(f"pts.shape is {pts.shape}")
         # print(f"occupancies.shape is {occupancies.shape}")
         # print(f"pointcloud.shape is {pointcloud.shape}")
