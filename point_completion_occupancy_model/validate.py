@@ -19,7 +19,7 @@ def validation(model, val_loader):
 
         pointcloud = pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
         pts = pts.view(-1, K, 3, 1).permute(0, 2, 1, 3).cuda()
-        occupancies = occupancies.view(BATCH_SIZE*K).cuda()
+        occupancies = occupancies.view(1*K).cuda()
 
         pred = model(pts, pointcloud)
 
