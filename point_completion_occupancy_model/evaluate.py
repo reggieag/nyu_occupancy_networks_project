@@ -136,10 +136,10 @@ if __name__ == "__main__":
         # print(pts.shape)
         # print(occupancies.shape)
         # print(org_pointcloud.shape)
-        # write_point_cloud_to_xyz(org_pointcloud, 'original_point_cloud_2.xyz')
-        # write_point_cloud_to_xyz(sample_pointcloud, 'sample_point_cloud_2.xyz')
-        #
-        # torch.save(sample_pointcloud, 'sample_pointcloud.pt')
+        write_point_cloud_to_xyz(org_pointcloud, 'original_point_cloud_2.xyz')
+        write_point_cloud_to_xyz(sample_pointcloud, 'sample_point_cloud_2.xyz')
+
+        torch.save(sample_pointcloud, 'sample_pointcloud.pt')
         sample_pointcloud = sample_pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
         # pts = pts.view(-1, 1, 3, 1).permute(0, 2, 1, 3)
 
@@ -149,29 +149,30 @@ if __name__ == "__main__":
         # adaptive_grid_fn = 'electronic_ag_32_3.txt'
         # print(f'saving adaptive grid to {generate_adaptive_grid}')
         # numpy.savetxt(generate_adaptive_grid, g.detach().numpy())
-        #
-        # g = torch.tensor(numpy.loadtxt('electronic_ag_32_3.txt'), dtype=torch.float)
 
+
+        # g = torch.tensor(numpy.loadtxt(non_adaptive_grid_fn), dtype=torch.float)
         ## COMMENTING OUT SINCE RUNNTIME IS SO LONG
-        # g = generate_grid(32, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5)
-        # # print(g)
-        # # print(g.shape)
-        # occ = []
-        # with torch.no_grad():
-        #     # pts = g.view(-1, 1, 3, 1).permute(0, 2, 1, 3).cuda()
-        #     for p in g:
-        #         c = p.view(-1, 1, 3, 1).permute(0, 2, 1, 3).cuda()
-        #         # print(c.shape)
-        #         # print(sample_pointcloud.shape)
-        #         pred = model(c, sample_pointcloud)
-        #         c.cpu()
-        #         occ.append(pred.cpu())
-        # numpy.savetxt('electronic_ag_preds_32_3.txt', occ)
+        g = generate_grid(32, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5)
 
-        pred = torch.tensor(numpy.loadtxt('electronic_ag_preds_32_3.txt'), dtype=torch.float)
-        pts = torch.tensor(numpy.loadtxt('electronic_ag_32_3.txt'), dtype=torch.float)
+        non_adaptive_grid_fn = 'electronic_g_32_3.txt'
+        print(f'saving adaptive grid to {non_adaptive_grid_fn}')
+        numpy.savetxt(non_adaptive_grid_fn, g.detach().numpy())
+
+        occ = []
+        with torch.no_grad():
+            for p in g:
+                c = p.view(-1, 1, 3, 1).permute(0, 2, 1, 3).cuda()
+                pred = model(c, sample_pointcloud)
+                c.cpu()
+                occ.append(pred.cpu())
+        print('saving results')
+        numpy.savetxt('electronic_g_preds_32_3.txt', occ)
+
+        pred = torch.tensor(numpy.loadtxt('electronic_g_preds_32_3.txt'), dtype=torch.float)
+        pts = torch.tensor(numpy.loadtxt('electronic_g_32_3.txt'), dtype=torch.float)
         mask = pred > 0.6
-        print(mask)
+        # print(mask)
         print(mask.shape)
         print(pts.shape)
         pointCloud = pts[mask]
