@@ -152,10 +152,14 @@ if __name__ == "__main__":
         #
         # g = torch.tensor(numpy.loadtxt('electronic_ag_32_3.txt'), dtype=torch.float)
         g = generate_grid(32, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5)
+        print(g)
+        print(g.shape)
         occ = []
         with torch.no_grad():
             for p in g:
                 c = p.view(-1, 1, 3, 1).permute(0, 2, 1, 3)
+                print(c.shape)
+                print(sample_pointcloud.shape)
                 pred = model(c, sample_pointcloud)
                 c.cpu()
                 occ.append(pred.cpu())
