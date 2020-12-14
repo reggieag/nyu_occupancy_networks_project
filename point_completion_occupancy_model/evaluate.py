@@ -63,10 +63,7 @@ def generate_adaptive_grid(ncuts, xl, xh, yl, yh, zl, zh, limit, mesh_funct, onC
             if onCuda:
                 coord = coord.cuda()
             active ^= mesh_funct(coord)
-            # print(f"active: {active}, coord: {coord}")
         if (active):
-            print(f"found active {coord}")
-            print(f"active: {active}, coord: {coord}")
             # near left coordinate is v0
             nl = ag[i]
             # top right coordinate is v6
@@ -90,25 +87,10 @@ def generate_adaptive_grid(ncuts, xl, xh, yl, yh, zl, zh, limit, mesh_funct, onC
 
 
 def over_model_threshold(model, sample_pointcloud, pts):
-    # print(pt.view(-1, 1, 3, 1))
-    # print(pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3))
-    # print(pt.shape)
-    # print(pt.view(-1, 1, 3, 1).shape)
-    # print(pt.view(-1, 1, 3, 1).permute(0, 2, 1, 3).shape)
     pts = pts.view(-1, 1, 3, 1).permute(0, 2, 1, 3)
     x = model(pts, sample_pointcloud)
-    # print(x)
-    # print(x.shape)
-    # print(x[0])
-    # print(x[0]>.001)
-    # print("pt is")
-    # print(pt)
     x = x.squeeze(-1)
     x = torch.sigmoid(x)
-    # print(x)
-    # print(x.shape)
-    # print(x[0])
-    # print((x[0] > 0.6))
     return (x[0] > 0.6).item()
 
 
@@ -129,19 +111,12 @@ if __name__ == "__main__":
 
     for batch_idx, data in enumerate(test_loader):
         pts, occupancies, sample_pointcloud, org_pointcloud = data
-        # break
-        # print(f"evaluating {data.dir}")
 
-        # print(sample_pointcloud.shape)
-        # print(pts.shape)
-        # print(occupancies.shape)
-        # print(org_pointcloud.shape)
         write_point_cloud_to_xyz(org_pointcloud, 'original_point_cloud_2.xyz')
         write_point_cloud_to_xyz(sample_pointcloud, 'sample_point_cloud_2.xyz')
 
         torch.save(sample_pointcloud, 'sample_pointcloud.pt')
         sample_pointcloud = sample_pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
-        # pts = pts.view(-1, 1, 3, 1).permute(0, 2, 1, 3)
 
         # f = partial(over_model_threshold, model, sample_pointcloud)
         # print('generating adaptive grid')
@@ -151,13 +126,12 @@ if __name__ == "__main__":
         # numpy.savetxt(generate_adaptive_grid, g.detach().numpy())
 
 
-        # g = torch.tensor(numpy.loadtxt(non_adaptive_grid_fn), dtype=torch.float)
-        ## COMMENTING OUT SINCE RUNNTIME IS SO LONG
         g = generate_grid(32, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5)
 
-        non_adaptive_grid_fn = 'electronic_g_32_3.txt'
-        print(f'saving adaptive grid to {non_adaptive_grid_fn}')
-        numpy.savetxt(non_adaptive_grid_fn, g.detach().numpy())
+        # uncomment to serialize grid to disk
+        # non_adaptive_grid_fn = 'electronic_g_32_3.txt'
+        # print(f'saving adaptive grid to {non_adaptive_grid_fn}')
+        # numpy.savetxt(non_adaptive_grid_fn, g.detach().numpy())
 
         occ = []
         with torch.no_grad():
@@ -172,9 +146,6 @@ if __name__ == "__main__":
         pred = torch.tensor(numpy.loadtxt('electronic_g_preds_32_3.txt'), dtype=torch.float)
         pts = torch.tensor(numpy.loadtxt('electronic_g_32_3.txt'), dtype=torch.float)
         mask = pred > 0.6
-        # print(mask)
-        print(mask.shape)
-        print(pts.shape)
         pointCloud = pts[mask]
         numpy.savetxt('electronic_32_3_ptcloud.xyz', pointCloud.detach().numpy())
         break
