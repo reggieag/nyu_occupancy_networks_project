@@ -140,21 +140,22 @@ if __name__ == "__main__":
         write_point_cloud_to_xyz(sample_pointcloud, 'sample_point_cloud_2.xyz')
 
         torch.save(sample_pointcloud, 'sample_pointcloud.pt')
-
         sample_pointcloud = sample_pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
         # pts = pts.view(-1, 1, 3, 1).permute(0, 2, 1, 3)
 
-        f = partial(over_model_threshold, model, sample_pointcloud)
-        g = generate_adaptive_grid(32, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 3, f, True)
-
-        numpy.savetxt('electronic_ag_32_3.txt', g.detach().numpy())
-
-        g = torch.tensor(numpy.loadtxt('electronic_ag_32_3.txt'), dtype=torch.float)
-
+        # f = partial(over_model_threshold, model, sample_pointcloud)
+        # print('generating adaptive grid')
+        # g = generate_adaptive_grid(32, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 3, f, True)
+        # adaptive_grid_fn = 'electronic_ag_32_3.txt'
+        # print(f'saving adaptive grid to {generate_adaptive_grid}')
+        # numpy.savetxt(generate_adaptive_grid, g.detach().numpy())
+        #
+        # g = torch.tensor(numpy.loadtxt('electronic_ag_32_3.txt'), dtype=torch.float)
+        g = generate_grid(32, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5)
         occ = []
         with torch.no_grad():
             for p in g:
-                c = p.view(1, 3, 1).cuda()
+                c = p.view(-1, 1, 3, 1).permute(0, 2, 1, 3)
                 pred = model(c, sample_pointcloud)
                 c.cpu()
                 occ.append(pred.cpu())
@@ -164,5 +165,5 @@ if __name__ == "__main__":
         pts = torch.tensor(numpy.loadtxt('electronic_ag_32_3.txt'), dtype=torch.float)
         mask = pred > 0.6
         pointCloud = pts[mask]
-        numpy.savetxt('electronic_32_3_ptcloud.txt', pointCloud.detach().numpy())
+        numpy.savetxt('electronic_32_3_ptcloud.xyz', pointCloud.detach().numpy())
         break
