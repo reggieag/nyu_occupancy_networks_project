@@ -157,7 +157,7 @@ if __name__ == "__main__":
         occ = []
         with torch.no_grad():
             for p in g:
-                c = p.view(-1, 1, 3, 1).permute(0, 2, 1, 3)
+                c = p.view(-1, 1, 3, 1).permute(0, 2, 1, 3).cuda()
                 print(c.shape)
                 print(sample_pointcloud.shape)
                 pred = model(c, sample_pointcloud)
