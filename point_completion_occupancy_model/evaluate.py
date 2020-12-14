@@ -136,10 +136,10 @@ if __name__ == "__main__":
         # print(pts.shape)
         # print(occupancies.shape)
         # print(org_pointcloud.shape)
-        write_point_cloud_to_xyz(org_pointcloud, 'original_point_cloud_2.xyz')
-        write_point_cloud_to_xyz(sample_pointcloud, 'sample_point_cloud_2.xyz')
-
-        torch.save(sample_pointcloud, 'sample_pointcloud.pt')
+        # write_point_cloud_to_xyz(org_pointcloud, 'original_point_cloud_2.xyz')
+        # write_point_cloud_to_xyz(sample_pointcloud, 'sample_point_cloud_2.xyz')
+        #
+        # torch.save(sample_pointcloud, 'sample_pointcloud.pt')
         sample_pointcloud = sample_pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
         # pts = pts.view(-1, 1, 3, 1).permute(0, 2, 1, 3)
 
