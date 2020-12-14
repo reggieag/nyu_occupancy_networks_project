@@ -151,23 +151,29 @@ if __name__ == "__main__":
         # numpy.savetxt(generate_adaptive_grid, g.detach().numpy())
         #
         # g = torch.tensor(numpy.loadtxt('electronic_ag_32_3.txt'), dtype=torch.float)
-        g = generate_grid(32, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5)
-        # print(g)
-        # print(g.shape)
-        occ = []
-        with torch.no_grad():
-            for p in g:
-                c = p.view(-1, 1, 3, 1).permute(0, 2, 1, 3).cuda()
-                # print(c.shape)
-                # print(sample_pointcloud.shape)
-                pred = model(c, sample_pointcloud)
-                c.cpu()
-                occ.append(pred.cpu())
-        numpy.savetxt('electronic_ag_preds_32_3.txt', occ)
+
+        ## COMMENTING OUT SINCE RUNNTIME IS SO LONG
+        # g = generate_grid(32, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5)
+        # # print(g)
+        # # print(g.shape)
+        # occ = []
+        # with torch.no_grad():
+        #     # pts = g.view(-1, 1, 3, 1).permute(0, 2, 1, 3).cuda()
+        #     for p in g:
+        #         c = p.view(-1, 1, 3, 1).permute(0, 2, 1, 3).cuda()
+        #         # print(c.shape)
+        #         # print(sample_pointcloud.shape)
+        #         pred = model(c, sample_pointcloud)
+        #         c.cpu()
+        #         occ.append(pred.cpu())
+        # numpy.savetxt('electronic_ag_preds_32_3.txt', occ)
 
         pred = torch.tensor(numpy.loadtxt('electronic_ag_preds_32_3.txt'), dtype=torch.float)
         pts = torch.tensor(numpy.loadtxt('electronic_ag_32_3.txt'), dtype=torch.float)
         mask = pred > 0.6
+        print(mask)
+        print(mask.shape)
+        print(pts.shape)
         pointCloud = pts[mask]
         numpy.savetxt('electronic_32_3_ptcloud.xyz', pointCloud.detach().numpy())
         break
