@@ -9,7 +9,7 @@ from utils.constants import K, BATCH_SIZE, POINTCLOUD_N
 from models.point_completion import OccupancyModel
 
 SHAPENET_DIR = "/scratch/rag551/occupancy_networks/ShapeNet"
-SHAPENET_CLASS = '04401088'  # electronics
+SHAPENET_CLASS = '04401088'  # phones
 SHAPENET_CLASS_DIR = os.path.join(SHAPENET_DIR, SHAPENET_CLASS)
 
 MODEL_FILENAME = 'point_completion_model_2.pth'
