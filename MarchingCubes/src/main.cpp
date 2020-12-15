@@ -66,8 +66,8 @@ int main(int argc, char *argv[]) {
   }
   else{ //default hardcode
 
-    std::vector<Cube> cubes = MarchingCubes::assembleCubes("/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/evaluation/bench_ag_32_3.txt",
-                                                           "/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/evaluation/couch_interp/couch_ag_preds_32_zero.txt");
+    //std::vector<Cube> cubes = MarchingCubes::assembleCubes("/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/evaluation/bench_ag_32_3.txt",
+    //                                                       "/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/evaluation/couch_interp/couch_ag_preds_32_zero.txt");
 
     //std::vector<Cube> cubes = MarchingCubes::generateCubes();
     //using namespace std::placeholders;
@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
     //MarchingCubes::computeOccupancies(cubes, std::bind(genus2, _1,_2,_3));
     //MarchingCubes::computeOccupancies(cubes, std::bind(wineglass, _1,_2,_3));
 
-    MarchingCubes::march(cubes, "couch_zero.off");
+    //MarchingCubes::march(cubes, "couch_zero.off");
   }
   return 1;
 }
