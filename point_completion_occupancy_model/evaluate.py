@@ -112,16 +112,16 @@ if __name__ == "__main__":
     for batch_idx, data in enumerate(test_loader):
         pts, occupancies, sample_pointcloud, org_pointcloud = data
 
-        write_point_cloud_to_xyz(org_pointcloud, 'original_point_cloud_2.xyz')
-        write_point_cloud_to_xyz(sample_pointcloud, 'sample_point_cloud_2.xyz')
+        write_point_cloud_to_xyz(org_pointcloud, './data/original_point_cloud_2.xyz')
+        write_point_cloud_to_xyz(sample_pointcloud, './data/sample_point_cloud_2.xyz')
 
-        torch.save(sample_pointcloud, 'sample_pointcloud.pt')
+        torch.save(sample_pointcloud, './data/sample_pointcloud.pt')
         sample_pointcloud = sample_pointcloud.view(-1, POINTCLOUD_N, 3, 1).permute(0, 2, 1, 3).cuda()
 
         # f = partial(over_model_threshold, model, sample_pointcloud)
         # print('generating adaptive grid')
         # g = generate_adaptive_grid(32, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 3, f, True)
-        # adaptive_grid_fn = 'electronic_ag_32_3.txt'
+        # adaptive_grid_fn = 'phone_ag_32_3.txt'
         # print(f'saving adaptive grid to {generate_adaptive_grid}')
         # numpy.savetxt(generate_adaptive_grid, g.detach().numpy())
 
@@ -129,7 +129,7 @@ if __name__ == "__main__":
         g = generate_grid(32, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5)
 
         # uncomment to serialize grid to disk
-        # non_adaptive_grid_fn = 'electronic_g_32_3.txt'
+        # non_adaptive_grid_fn = 'phone_g_32_3.txt'
         # print(f'saving adaptive grid to {non_adaptive_grid_fn}')
         # numpy.savetxt(non_adaptive_grid_fn, g.detach().numpy())
 
@@ -141,11 +141,11 @@ if __name__ == "__main__":
                 c.cpu()
                 occ.append(pred.cpu())
         print('saving results')
-        numpy.savetxt('electronic_g_preds_32_3.txt', occ)
+        numpy.savetxt('./data/phone_g_preds_32_3.txt', occ)
 
-        pred = torch.tensor(numpy.loadtxt('electronic_g_preds_32_3.txt'), dtype=torch.float)
-        pts = torch.tensor(numpy.loadtxt('electronic_g_32_3.txt'), dtype=torch.float)
+        pred = torch.tensor(numpy.loadtxt('./data/phone_g_preds_32_3.txt'), dtype=torch.float)
+        pts = torch.tensor(numpy.loadtxt('./data/phone_g_32_3.txt'), dtype=torch.float)
         mask = pred > 0.6
         pointCloud = pts[mask]
-        numpy.savetxt('electronic_32_3_ptcloud.xyz', pointCloud.detach().numpy())
+        numpy.savetxt('./data/phone_32_3_ptcloud.xyz', pointCloud.detach().numpy())
         break
