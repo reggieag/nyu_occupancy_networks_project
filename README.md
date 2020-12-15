@@ -4,13 +4,23 @@ Authors: Andrea Malleo, Reggie Gomez
 # Results
 
 ## Single Image Mesh Reconstruction of Benches
-![benchResult1](https://github.com/reggieag/nyu_occupancy_networks_project/blob/master/report/benchImages/pervertexbench.gif)
-![benchResult2](https://github.com/reggieag/nyu_occupancy_networks_project/blob/master/report/benchImages/wirebench.gif)
+<p float="left">
+<img src="/report/benchImages/pervertexbench.gif" width="350" height="350"/> 
+<img src="/report/benchImages/wirebench.gif" width="350" height="350"/>
+</p>
+
+## Point Completion of Cell Phone
+<p float="left">
+<img src="/report/phoneImages/phone_pervertex.gif" width="350" height="350"/>
+<img src="/report/phoneImages/phone_wireframe.gif" width="350" height="350"/>
+</p>
+
 
 ## Interpolation in Latent Variable Space of Couches
-
-![couchInterp1](https://github.com/reggieag/nyu_occupancy_networks_project/blob/master/report/latentInterpGifs/latentInterp_front_threshold3.gif)
-![couchInterp2](https://github.com/reggieag/nyu_occupancy_networks_project/blob/master/report/latentInterpGifs/latentInterp_side_threshold3.gif)
+<p float="left">
+<img src="/report/latentInterpGifs/latentInterp_front_threshold3.gif" width="350" height="350"/> 
+<img src="/report/latentInterpGifs/latentInterp_side_threshold3.gif" width="350" height="350"/>
+</p>
 
 ## Environment Setup
 Make sure anaconda is installed.
