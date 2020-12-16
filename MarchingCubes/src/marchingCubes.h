@@ -12,18 +12,28 @@ class Vertex{
   bool occupies;
   int globalIdx;
   bool operator<(const Vertex &other) const{
-      if ((x-other.x) > -0.001) return true;
-      if ((x-other.x) > 0.001) return false;
-      if ((y-other.y) > -0.001) return true;
-      if ((z-other.y) > 0.001) return false;
-      if ((z-other.z) > -0.001) return true;
+    float dist = std::sqrt((x-other.x)*(x-other.x) + (y-other.y)*(y-other.y) +
+                             (z-other.z)*(z-other.z));
+
+      if (dist < 0.0000001)
+        return false;
+
+      if (fabs(x - other.x) > 0.0000001)
+        return x < other.x;
+      if (fabs(y - other.y) > 0.0000001)
+        return y < other.y;
+      if (fabs(z - other.z) > 0.0000001)
+        return z < other.z;
       return false;
-  }
+
+      }
+
+  /*
   bool operator==(const Vertex &other) const{
     if ((fabs(x-other.x) < 0.001) && (fabs(y-other.y) < 0.001) && (fabs(z-other.z) < 0.001))
       return true;
     return false;
-  }
+  }*/
 };
 
 class Cube{
@@ -43,7 +53,7 @@ struct Face{
 class MarchingCubes{
 public:
   //Divides the canonical cube into a grid of cubes
-  static std::vector<Cube> generateCubes(std::string gridPtsFile);
+  static std::vector<Cube> generateCubes(std::string gridPtsFile="");
   
   //computes occupancy values for each vertex in each cube given implicit meshBoundary function
   static void computeOccupancies(std::vector<Cube> &cubes, std::function<bool (float, float, float)> meshBoundary);

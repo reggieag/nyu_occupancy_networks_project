@@ -341,12 +341,11 @@ void readCoordinatesFromFile(std::vector<Cube> &cubes, std::string pointsFile){
 }
 
 
-std::vector<Cube> MarchingCubes::generateCubes(std::string gridPtsFile=""){
+std::vector<Cube> MarchingCubes::generateCubes(std::string gridPtsFile){
   std::vector<Cube> cubes;
-  //std::string gridpointsFile = "/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/evaluation/winegrid.txt";
-  //std::string gridpointsFile = "/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/evaluation/coords.txt";
-  std::string defaultgridpointsFile = "/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/MarchingCubes/src/32CubedGrid.txt";
-  //std::string gridpointsFile = "/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/evaluation/agrid_32_5.txt";
+
+  //std::string defaultgridpointsFile = "/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/MarchingCubes/src/32CubedGrid.txt";
+  std::string defaultgridpointsFile = "/home/andrea/Documents/GradSchool/OccupancyNetworks/nyu_occupancy_networks_project/evaluation/agrid_32_5.txt";
   if(!gridPtsFile.empty())
     readCoordinatesFromFile(cubes, gridPtsFile);
   else
@@ -480,11 +479,11 @@ struct VertexComparator{
       if (dist < 0.0000001)
         return false;
 
-      if (fabs(v1.x - v2.x) > 0.001)
+      if (fabs(v1.x - v2.x) > 0.0000001)
         return v1.x < v2.x;
-      if (fabs(v1.y - v2.y) > 0.001)
+      if (fabs(v1.y - v2.y) > 0.0000001)
         return v1.y < v2.y;
-      if (fabs(v1.z - v2.z) > 0.001)
+      if (fabs(v1.z - v2.z) > 0.0000001)
         return v1.z < v2.z;
       return false;
 
