@@ -16,7 +16,6 @@ MODEL_FILENAME = 'point_completion_model_2.pth'
 
 
 def train(epoch, model, train_loader, optimizer):
-    # decoderLoss = nn.BCEWithLogitsLoss(reduction='sum')  # Dunno if i need this loss or what
     modelCriterion = nn.BCELoss()
     model.train()
 
