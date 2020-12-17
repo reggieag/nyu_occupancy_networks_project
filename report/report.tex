@@ -1,4 +1,4 @@
-% Created 2020-12-16 Wed 09:59
+% Created 2020-12-16 Wed 21:00
 % Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
@@ -37,7 +37,7 @@
 \begin{document}
 
 \maketitle
-\section{Intro}
+\section{Introduction}
 
 \begin{multicols}{2}
   We present an implementation of an existing technique for 3D reconstruction via the learned approximation of surface boundaries. Specifically we followed the method presented in Occupancy Networks \hyperlink{ref1}{1} to train a neural network classifier to learn the continuous decision boundary representing the implicit surface of some class of objects. The network maps coordinates in 3D space to a value between 0 and 1, representing the probability that point lies inside an instance of a 3D mesh. This mesh generation inference process is either conditioned on images of an object, or unconditioned, decoding from a latent variable sampled from the learned distribution of an encoding in 3d mesh function space. The resulting meshes generated produce a continuous distribution of instances within the category the model was trained on.
@@ -62,12 +62,12 @@
 
 
     \subsection{Training}
-    All model architectures we produced \footnote{https://github.com/reggieag/nyu\_occupancy\_networks\_project} emulate those used in the paper. Where any component was unclear from the description and images of the paper, we consulted the available \hyperlink{ref3}{implementation}. All three experiments share a common pipeline that the coordinates are passed through. They all differ in their means of computing an encoding on which to condition the training. The encoding is either from a 2d image tensor, or simply from the points themselves.
+    All model architectures we produced \footnote{https://github.com/reggieag/nyu\_occupancy\_networks\_project} emulate those used in the paper. Where any component was unclear from the description and images of the paper, we consulted the available \hyperlink{ref3}{implementation}. This step was limited to debugging. All three experiments share a common pipeline that the coordinates are passed through. They all differ in their means of computing an encoding on which to condition the training. The encoding is either from a 2d image tensor, or simply from the points themselves.
     \par
     \\
     Experiment one concerns the generation of meshes conditioned on a still image of an instance of the input category.  The input to each 'mini-batch' consisted of a single image, randomly drawn from the thirteen available for each instance and some $K$ coordinate points from the ground truth of that mesh. The image went into an encoder block, which in this case was a downloaded ResNet-18 architecture pretrained on the ImageNet dataset \hyperlink{ref2}{2}. The output of the encoder is passed into a fully-connected layer to project the features to a 256 dimension encoding $c$. The points meanwhile are essentially passed through five \hyperlink{ref7}{ResNet} blocks. Crucially, the conditional batch normalization
     \begin{flalign*}
-      x_{out} = \gamma(c)b + \Beta(c)\\
+      x_{out} = \gamma(c)b + \beta(c)\\
     \end{flalign} is computed twice inside of each ResNet block where
     \begin{flalign*}
       b &= \frac{x_{in}-\mu}{\sqrt(\sigma^2 + \epsilon)}\\
@@ -80,6 +80,8 @@
     \\
     \par
     Training for this experiment lasted over day, which is an outlier from the next two experiments, due to all of the images pumped in per batch.
+    \par
+    Experiment two sought to reconstruct noisy and incomplete point clouds. The conditioning step here comes from the output of a PointNetEncoder \hyperlink{ref10}{10}. The PointNet encoder has 4 basic ResNet blocks and two fully connected layers. Between the blocks there is max pooling and expansion. The output is projected to a 512 dimensional vector encoding, which is the $c$ input to the conditional batch normalization step. The loss function is identical to the above.
     \par
     Experiment three involved learning a probabilistic latent variable model for representing the mesh function space. This model just takes points and occupancies, and first passes the points in to an \hyperlink{ref8}{AutoVariational Encoder} module. The architecture of this network is a slight variation on the Point Cloud Completion encoder just described, the most significant difference being that the output are two vectors for the mean $\mu_{\psi}$ and log-standard deviation $log(\sigma_{\psi}^2)$ of a 128 dimensional latent code z. In each forward pass, once these two vectors are computed, a sample from this distribution is drawn as $(e^{\sigma_{\psi}}*rand()+ \mu_{\psi})$. This 128 dimensional vector is now an encoding, and used like in experiment one for the conditional batch normalization. The loss function here is two pronged, composed of both the binary cross entropy loss between the computed probablities and the target occupancies, and the KL divergence of the generated $\mu_{\psi}$ and $\sigma_{\psi}$ from a Gaussian distribution of mean 0 and standard deviation 1. \hyperlink{ref8}{8} \begin{flalign*}
       L(\theta, \psi) &= \frac{1}{|B|} \sum_{i=1}^{|B|} \sum_{k=1}^K L(f_{\theta}((p_{ij},z_{ij}),o_{ij})) \\
@@ -116,6 +118,7 @@
 \\
 
 \textbf{Experiment 2:}
+The goal of the second experiment was to train a model that achieves 3D mesh reconstruction, but with a noisy point cloud passed in at inference instead of a single 2D image like in experiment 1. Our model was trained on the phone category for one epoch. At inference time, we randomly chose 300 points out of 100,000 from the complete point cloud representation. We then passed those 300 sampled points to a PointNet encoder. The PointNet encoder then feeds into the Occupancy Network the same as in experiment 1. We found that the model was able to train fairly accurately within one epoch. Accuracy was around 99\% when we ran validation on the model. If you look at Figure 6 you can see some rendered results. You can see that the body of the phone was learned fairly well, but the model was not able to recognize the antenna. One possible extension would be to render a denser point cloud from the trained occupancy network.
 
 \includegraphics[scale=1.4]{phoneImages/compilation.png} \\
 \caption{\hypertarget{fig6}{\textbf{Figure 6}} Here we have 4 images showing respectively a) The ground truth point cloud of a phone from the data set. b) the incomplete point cloud input at inference time. c) the completed point cloud containing the predicted and provided coordinates. d) just the predicted points produced by the Point Completion network}\\
@@ -123,18 +126,20 @@
 \textbf{Experiment 3:} The goal of the second experiment was to learn a distribution over a latent embedding of the mesh category for unconditioned generation of 3d meshes and demonstrate the continuous nature of this distribution by interpolating in the latent space. \hyperlink{fig7}{Figure 7} depicts a couch mesh produced from a random z. From experiments during inference, we found the bounds of the z to indeed approach that in a distribution with standard deviation of 1. Given a z vector composed of values of magnitude 5 or greater, the network produced an empty grid. The probability threshold required more attention to here as compared to experiment 1. We needed to raise it in order to filter out couches with inflated bases. The gif posted on our Github page provides the best demonstration of our results.
 
 
-\begin{figure}[h!]
-  \includegraphics[scale=0.4]{./benchImages/couch.png}
-  \caption{\hypertarget{fig7}{\textbf{Figure 7}} A Meshlab rendering of one randomly generated couch mesh. Note the varying size of solid pieces, particularly on the arm rest area of the couch. This is evidence of the MultiResolution technique, where the resolution of the image increases at the boundary of the mesh. }
 
-\end{figure}
+\includegraphics[scale=0.4]{./benchImages/couch.png}\\
+\caption{\hypertarget{fig7}{\textbf{Figure 7}} A Meshlab rendering of one randomly generated couch mesh. Note the varying size of solid pieces, particularly on the arm rest area of the couch. This is evidence of the MultiResolution technique, where the resolution of the image increases at the boundary of the mesh. }
 
-\newpage 
 \section{Discussion}
-This is the discussion
+\begin{wrapfigure}{l}{}
+\includegraphics[scale=0.4]{./benchImages/groundTruth.png}
+\end{wrapfigure}
 
-\includegraphics[scale=0.4]{./benchImages/groundTruth.png} \\
-\caption{\textbf{Figure 8 from \hyperlink{ref1}{1}} In the left column, the authors present their resulting meshes for a variety of object classes, and on the right column is the respective ground truth mesh. }
+In this paper, we documented our journey reproducing the existing concept of Occupancy Networks as an expressive and efficient representation for 3D meshes. We performed three experiments that tested the capability of our models to generate meshes conditioned on an input image, reconstructed from an incomplete and noisy point cloud, and from a latent variable in mesh function space. In all three cases we were able to demonstrate the ability to generate such meshes on the bench, phone, and sofa object categories respectively. While the rendering results of our homespun Marching Cubes implementation leave a clear direction of future work, there are more next steps to be done on the learning side. The space of suitable conditioning inputs has not been fully explored, for instance with real-life photos of chairs for experiment 1. Additionally, a clear representation of the different manifestations of couch meshes on the perimeter of the latent space would be enlightening to investigate. \\
+
+\textbf{Figure 8 from \hyperlink{ref1}{1}} In the left column, the authors present their resulting meshes for a variety of object classes, and on the right column is the respective ground truth mesh.
+
+\clearpage
 
 \section{References}
 \begin{enumerate*}
@@ -147,5 +152,6 @@ This is the discussion
 \item \hypertarget{ref7}{[7]}Kaiming He, Zhang,Ren, Sun. Deep Residual Learning for Image Recognition. arXiv:1512.03385.  2015
 \item \hypertarget{ref8}{[8]} https://github.com/geyang/variational\_autoencoder\_pytorch
 \item \hypertarget{ref9}{[9]} Lorenson and Cline. Marching Cubes: A High Resolution 3D Surface Construction Algorithm. Computer Graphics Volume 21, Number 4, 1987.
+\item \hypertarget{ref10}{[10]} H. Fan, H. Su, and L. J. Guibas.  A point set generation network for 3D object reconstruction from a single image.  InProc. IEEEConf. on Computer Vision and Pattern Recognition (CVPR), 2017
 \end{enumerate}
 \end{document}
