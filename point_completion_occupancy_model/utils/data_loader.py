@@ -23,7 +23,6 @@ class DataSetClass(torch.utils.data.Dataset):
         return self.length
 
     def __getitem__(self, idx):
-        # print(f"getting dir {self.dir}")
         # pick POINTCLOUD_N random points for the pointcloud
         point_cloud_indicies = numpy.random.randint(self.point_cloud.shape[0], size=POINTCLOUD_N)
         point_cloud_sample = self.point_cloud[point_cloud_indicies, :]
